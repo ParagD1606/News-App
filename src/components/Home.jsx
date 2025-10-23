@@ -1,18 +1,14 @@
 import React, { useEffect, useState } from "react";
 import NewsCard from "./NewsCard";
 import { fetchTopHeadlines } from "../services/newsApi";
-// Removed: import Navbar from "./Navbar";
 
 const PAGE_SIZE = 6;
 
-// UPDATED: Destructure bookmarks and handleBookmark from props
-const Home = ({ theme, toggleTheme, bookmarks, handleBookmark, searchQuery, setSearchQuery }) => { 
+const Home = ({ bookmarks, handleBookmark, searchQuery, setSearchQuery }) => { 
   const [articles, setArticles] = useState([]);
-  // Removed bookmarks state initialization
   const [category, setCategory] = useState("general");
   const [currentPage, setCurrentPage] = useState(1);
-  // Removed searchQuery and setSearchQuery state initialization (now passed from App)
-
+  
   const categories = [
     "general",
     "business",
@@ -39,36 +35,39 @@ const Home = ({ theme, toggleTheme, bookmarks, handleBookmark, searchQuery, setS
     setSearchQuery(""); // Clear search when switching category
   };
 
-  // Removed handleBookmark function
-
   const totalPages = Math.ceil(articles.length / PAGE_SIZE);
   const startIdx = (currentPage - 1) * PAGE_SIZE;
-  const currentArticles = articles.slice(startIdx, startIdx + PAGE_SIZE);
+  
+  // NEW LOGIC: Filter articles to ensure urlToImage exists and is not null/empty
+  const filteredArticles = articles.filter(article => article.urlToImage);
+
+  // Use the filtered list to determine the current articles for the page
+  const currentArticles = filteredArticles.slice(startIdx, startIdx + PAGE_SIZE);
+
+  // Recalculate totalPages based on the filtered list size
+  const totalPagesAfterFilter = Math.ceil(filteredArticles.length / PAGE_SIZE);
+
 
   return (
-    // Removed the main wrapper div and Navbar from Home.jsx
     <div className="max-w-7xl mx-auto"> 
-
       {/* Category Buttons */}
       <div className="flex flex-wrap justify-center gap-3 px-6 py-3">
         {categories.map((cat) => (
           <button
             key={cat}
-            // Use handleCategoryChange
             onClick={() => handleCategoryChange(cat)}
             className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200
               ${
-                category === cat && searchQuery === "" // Highlight only if not searching
+                category === cat && searchQuery === ""
                   ? "bg-blue-600 text-white shadow-lg"
                   : "bg-gray-300 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-400 dark:hover:bg-gray-600"
               }`}
-            // Disable buttons if a search query is active
             disabled={searchQuery !== ""}
           >
             {cat.charAt(0).toUpperCase() + cat.slice(1)}
           </button>
         ))}
-        {/* ADDED: Indicator for active search */}
+        {/* Indicator for active search */}
         {searchQuery && (
           <div className="flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-medium bg-green-500 text-white shadow-lg">
             <span>Searching for: "{searchQuery}"</span>
@@ -90,14 +89,19 @@ const Home = ({ theme, toggleTheme, bookmarks, handleBookmark, searchQuery, setS
             key={idx}
             article={article}
             onBookmark={handleBookmark}
-            // Check if article is in the bookmarks array passed via props
             isBookmarked={!!bookmarks.find((a) => a.url === article.url)}
           />
         ))}
+        {/* Show message if no articles with images are found */}
+        {filteredArticles.length === 0 && (
+            <div className="col-span-full text-center py-10 text-xl text-gray-700 dark:text-gray-300">
+                No articles with images found in this category or search.
+            </div>
+        )}
       </main>
 
       {/* Pagination */}
-      {totalPages > 1 && (
+      {totalPagesAfterFilter > 1 && (
         <div className="flex justify-center items-center gap-3 p-6">
           {currentPage > 1 && (
             <button
@@ -108,7 +112,7 @@ const Home = ({ theme, toggleTheme, bookmarks, handleBookmark, searchQuery, setS
             </button>
           )}
 
-          {[...Array(totalPages)].map((_, idx) => (
+          {[...Array(totalPagesAfterFilter)].map((_, idx) => (
             <button
               key={idx}
               className={`px-3 py-1 rounded font-medium transition-all duration-200 ${
@@ -122,7 +126,7 @@ const Home = ({ theme, toggleTheme, bookmarks, handleBookmark, searchQuery, setS
             </button>
           ))}
 
-          {currentPage < totalPages && (
+          {currentPage < totalPagesAfterFilter && (
             <button
               className="px-3 py-1 rounded bg-gray-300 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-400 dark:hover:bg-gray-600 transition"
               onClick={() => setCurrentPage((p) => p + 1)}

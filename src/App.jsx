@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from "react";
 import Home from "./components/Home";
-import Bookmarks from "./components/Bookmarks"; // NEW IMPORT
-import Navbar from "./components/Navbar"; // NEW IMPORT
+import Bookmarks from "./components/Bookmarks";
+import Navbar from "./components/Navbar";
 
 const App = () => {
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
-  const [page, setPage] = useState("home"); // NEW STATE for simple routing
+  const [page, setPage] = useState("home"); 
   const [bookmarks, setBookmarks] = useState(() =>
     JSON.parse(localStorage.getItem("bookmarks") || "[]")
   );
+  // NEW: Add search state to App.jsx
+  const [searchQuery, setSearchQuery] = useState(""); 
 
   // Theme effect (existing logic)
   useEffect(() => {
@@ -20,7 +22,7 @@ const App = () => {
     localStorage.setItem("theme", theme);
   }, [theme]);
   
-  // Bookmark handler (moved from Home to App to share with Bookmarks page)
+  // Bookmark handler
   const handleBookmark = (article) => {
     let updated;
     if (bookmarks.find((a) => a.url === article.url)) {
@@ -29,13 +31,12 @@ const App = () => {
       updated = [...bookmarks, article];
     }
     setBookmarks(updated);
-    localStorage.setItem("bookmarks", JSON.stringify(updated)); // Save to localStorage
+    localStorage.setItem("bookmarks", JSON.stringify(updated));
   };
 
   const toggleTheme = () => setTheme(theme === "light" ? "dark" : "light");
 
   const renderPage = () => {
-    // Pass necessary state and handlers down to components
     if (page === "home") {
       return (
         <Home 
@@ -43,12 +44,13 @@ const App = () => {
           toggleTheme={toggleTheme} 
           bookmarks={bookmarks}
           handleBookmark={handleBookmark}
-          setPage={setPage} // Pass setPage for Navbar/routing
+          // NEW: Pass search props to Home
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
         />
       );
     } else if (page === "bookmarks") {
       return (
-        // Bookmarks page handles its own display
         <Bookmarks 
           bookmarks={bookmarks}
           handleBookmark={handleBookmark}
@@ -56,7 +58,7 @@ const App = () => {
         />
       );
     }
-    return <Home theme={theme} toggleTheme={toggleTheme} />;
+    return null; // Should not happen
   };
 
   return (
@@ -64,8 +66,11 @@ const App = () => {
       <Navbar 
         theme={theme} 
         toggleTheme={toggleTheme} 
-        page={page} // Pass current page state
-        setPage={setPage} // Pass handler to switch pages
+        page={page} 
+        setPage={setPage} 
+        // NEW: Pass search props to Navbar
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
       />
       {/* Spacer for fixed navbar */}
       <div className="h-24"></div> 
