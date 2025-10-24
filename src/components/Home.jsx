@@ -1,12 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import NewsCard from "./NewsCard";
-import { fetchTopHeadlines } from "../services/newsApi";
+// Removed: import { fetchTopHeadlines } from "../services/newsApi"; // No longer fetches directly
 
 const PAGE_SIZE = 6;
 
-const Home = ({ bookmarks, handleBookmark, searchQuery, setSearchQuery }) => { 
-  const [articles, setArticles] = useState([]);
-  const [category, setCategory] = useState("general");
+// UPDATED PROPS: Receives all data and setters from App.jsx
+const Home = ({ 
+    articles, 
+    bookmarks, 
+    handleBookmark, 
+    category, 
+    setCategory,
+    searchQuery, 
+    setSearchQuery 
+}) => { 
+  // ONLY KEEPS STATE RELATED TO PAGINATION, all others are props
   const [currentPage, setCurrentPage] = useState(1);
   
   const categories = [
@@ -19,15 +27,7 @@ const Home = ({ bookmarks, handleBookmark, searchQuery, setSearchQuery }) => {
     "science",
   ];
 
-  useEffect(() => {
-    const loadNews = async () => {
-      // Pass the search query to fetchTopHeadlines
-      const data = await fetchTopHeadlines(category, searchQuery); 
-      setArticles(data);
-      setCurrentPage(1);
-    };
-    loadNews();
-  }, [category, searchQuery]); 
+  // Removed useEffect for fetching, as it's now in App.jsx
 
   // Function to handle category selection and clear search
   const handleCategoryChange = (cat) => {
@@ -35,13 +35,11 @@ const Home = ({ bookmarks, handleBookmark, searchQuery, setSearchQuery }) => {
     setSearchQuery(""); // Clear search when switching category
   };
 
-  const totalPages = Math.ceil(articles.length / PAGE_SIZE);
-  const startIdx = (currentPage - 1) * PAGE_SIZE;
-  
   // NEW LOGIC: Filter articles to ensure urlToImage exists and is not null/empty
   const filteredArticles = articles.filter(article => article.urlToImage);
 
-  // Use the filtered list to determine the current articles for the page
+  const totalPages = Math.ceil(filteredArticles.length / PAGE_SIZE);
+  const startIdx = (currentPage - 1) * PAGE_SIZE;
   const currentArticles = filteredArticles.slice(startIdx, startIdx + PAGE_SIZE);
 
   // Recalculate totalPages based on the filtered list size

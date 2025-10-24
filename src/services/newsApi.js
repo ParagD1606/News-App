@@ -12,8 +12,9 @@ export const fetchTopHeadlines = async (category = "general", query = "") => {
         apiKey: API_KEY,
         country: "us",
         category,
+        // Include the search query (q) only if it's provided
         ...(query && { q: query }), 
-        pageSize: 20,
+        pageSize: 100, // Increased page size to get more data for analytics
       },
     });
     return res.data.articles;

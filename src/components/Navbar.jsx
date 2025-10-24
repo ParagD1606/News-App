@@ -1,7 +1,6 @@
 import React from "react";
 import { HiSun, HiMoon, HiBookmark, HiChartBar, HiSearch } from "react-icons/hi";
 
-// UPDATED: Receive page and setPage props
 const Navbar = ({ theme, toggleTheme, searchQuery, setSearchQuery, page, setPage }) => {
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
@@ -55,7 +54,11 @@ const Navbar = ({ theme, toggleTheme, searchQuery, setSearchQuery, page, setPage
             {theme === "dark" ? <HiSun className="w-6 h-6" /> : <HiMoon className="w-6 h-6" />}
           </button>
 
-          <div className="flex items-center gap-1 text-gray-800 dark:text-gray-200 cursor-pointer">
+          {/* Analytics Link */}
+          <div 
+            onClick={() => setPage("analytics")}
+            className={`flex items-center gap-1 cursor-pointer transition ${page === "analytics" ? "text-blue-500 dark:text-blue-400" : "text-gray-800 dark:text-gray-200"}`}
+          >
             <HiChartBar className="w-5 h-5" />
             <span className="hidden sm:block">Analytics</span>
           </div>
