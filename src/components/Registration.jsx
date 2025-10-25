@@ -50,7 +50,7 @@ const Registration = () => {
     // Simulate redirect after 2 seconds
     setTimeout(() => {
         // 4. Use navigate
-        navigate("/login"); 
+        navigate("/home"); 
     }, 2000);
   };
 
