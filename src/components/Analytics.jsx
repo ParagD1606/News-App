@@ -6,9 +6,6 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-// --- STOP WORDS & UTILITIES (Keeping these functions as they were) ---
-
-// A comprehensive list of common English words to ignore
 const STOP_WORDS = new Set([
   'a', 'an', 'and', 'are', 'as', 'at', 'be', 'but', 'by', 'for', 'if', 'in',
   'into', 'is', 'it', 'no', 'not', 'of', 'on', 'or', 'such', 'that', 'the',
@@ -27,7 +24,6 @@ const STOP_WORDS = new Set([
   'like', 'than', 'then', 'so', 'we', 'us', 'our', 'them', 'they', 'their'
 ]);
 
-// Function to clean text and count word frequencies
 const getWordFrequencies = (articles) => {
   const allText = articles
     .map(a => `${a.title} ${a.description || ''}`)
@@ -51,7 +47,6 @@ const getWordFrequencies = (articles) => {
     .slice(0, 100);
 };
 
-// Function to calculate source distribution
 const calculateSourceDistribution = (articles) => {
   const counts = articles.reduce((acc, article) => {
     const sourceName = article.source?.name || "Unknown Source";
@@ -79,7 +74,6 @@ const generateColors = (count) => {
   return Array.from({ length: count }, (_, i) => colors[i % colors.length]);
 };
 
-// --- COMPONENT ---
 
 const Analytics = ({ articles, currentCategory, searchQuery }) => {
   const sourceData = useMemo(() => calculateSourceDistribution(articles), [articles]);
@@ -195,7 +189,7 @@ const Analytics = ({ articles, currentCategory, searchQuery }) => {
                   ))}
               </div>
               <p className="mt-4 text-xs text-gray-400 dark:text-gray-500">
-                  Tip: The size reflects frequency. Install `react-wordcloud` for a visual rotation and layout.
+                  Tip: The size reflects frequency.
               </p>
           </div>
         </div>

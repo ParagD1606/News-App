@@ -1,12 +1,11 @@
 import React from "react";
-import { HiBookmark, HiArrowLeft } from "react-icons/hi"; // Imported HiArrowLeft
+import { HiBookmark, HiArrowLeft } from "react-icons/hi"; 
 import NewsCard from "./NewsCard";
 
 const Bookmarks = ({ bookmarks, handleBookmark, setPage }) => {
   return (
     <div className="max-w-7xl mx-auto p-6 pt-9 min-h-screen">
       
-      {/* Enhanced Header */}
       <div className="flex items-center justify-between pb-4 mb-6 border-b border-gray-300 dark:border-gray-700">
         <h2 className="text-4xl font-extrabold text-gray-900 dark:text-white flex items-center gap-3">
           <HiBookmark className="w-8 h-8 text-blue-500" />
@@ -17,7 +16,6 @@ const Bookmarks = ({ bookmarks, handleBookmark, setPage }) => {
         </span>
       </div>
 
-      {/* Empty State Redesign */}
       {bookmarks.length === 0 ? (
         <div className="text-center py-20 border border-dashed border-gray-400 dark:border-gray-600 rounded-lg bg-white/50 dark:bg-gray-800/50 shadow-inner">
           <HiBookmark className="w-16 h-16 text-blue-400 mx-auto mb-4" />

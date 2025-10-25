@@ -5,6 +5,9 @@ import Navbar from "./components/Navbar";
 import Analytics from "./components/Analytics";
 import Landing from "./components/Landing"; 
 import Reels from "./components/Reels"; 
+import Registration from "./components/Registration"; 
+import Login from "./components/Login"; 
+import Profile from "./components/Profile"; 
 import { fetchTopHeadlines } from "./services/newsApi";
 
 const App = () => {
@@ -30,8 +33,8 @@ const App = () => {
   
   // NEW FETCHING EFFECT: Handles changes to category or search query
   useEffect(() => {
-    // Only fetch data if the user is not on the landing page
-    if (page !== 'landing') {
+    // Only fetch data if the user is on a content-based page
+    if (page === 'home' || page === 'reels' || page === 'analytics') { 
         const loadNews = async () => {
           const data = await fetchTopHeadlines(category, searchQuery);
           setNewsArticles(data);
@@ -58,6 +61,19 @@ const App = () => {
     if (page === "landing") { 
         // NOTE: theme prop is no longer needed on Landing since it manages its own background
         return <Landing setPage={setPage} />; 
+    }
+    
+    if (page === "registration") {
+        return <Registration setPage={setPage} />;
+    }
+    
+    if (page === "login") {
+        return <Login setPage={setPage} />;
+    }
+    
+    if (page === "profile") { 
+        // Pass bookmarks array for dynamic count
+        return <Profile setPage={setPage} bookmarks={bookmarks} />;
     }
     
     if (page === "home") {
@@ -108,7 +124,8 @@ const App = () => {
     return null;
   };
 
-  const showNavbar = page !== 'landing';
+  // Hide Navbar on landing, registration, and login pages
+  const showNavbar = page !== 'landing' && page !== 'registration' && page !== 'login'; 
   
   // Conditional classes for the main wrapper
   const themeClasses = page !== 'landing' 
@@ -117,7 +134,7 @@ const App = () => {
 
   return (
     <div className={`relative w-full min-h-screen transition-colors duration-300 overflow-x-hidden ${themeClasses}`}>
-      {/* Navbar only shows if not on the landing page */}
+      {/* Navbar only shows if authentication/landing pages are not visible */}
       {showNavbar && (
         <Navbar 
           theme={theme} 

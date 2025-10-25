@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-// Import all necessary icons
-import { HiSun, HiMoon, HiBookmark, HiChartBar, HiMenu, HiX, HiSearch, HiHome, HiPhotograph } from "react-icons/hi"; 
+// Import all necessary icons (including HiUserCircle)
+import { HiSun, HiMoon, HiBookmark, HiChartBar, HiMenu, HiX, HiHome, HiPhotograph, HiUserCircle } from "react-icons/hi"; 
 
 const Navbar = ({ theme, toggleTheme, searchQuery, setSearchQuery, page, setPage }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false); 
@@ -65,6 +65,16 @@ const Navbar = ({ theme, toggleTheme, searchQuery, setSearchQuery, page, setPage
                   <HiBookmark className="w-5 h-5" />
                   <span className="hidden lg:block text-sm">Bookmarks</span>
               </div>
+              
+              {/* Profile link - NEW */}
+              <div 
+                  onClick={() => handleNavigation("profile")} 
+                  className={`flex items-center gap-1 cursor-pointer transition ${page === "profile" ? "text-blue-600 dark:text-blue-400 font-bold" : "text-gray-700 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-300"}`}
+              >
+                  <HiUserCircle className="w-6 h-6" />
+                  <span className="hidden lg:block text-sm">Profile</span>
+              </div>
+
           </div>
           
           {/* Theme Toggle - Enhanced Transitions */}
@@ -139,6 +149,15 @@ const Navbar = ({ theme, toggleTheme, searchQuery, setSearchQuery, page, setPage
               >
                   <HiBookmark className="w-6 h-6 mr-3" />
                   Bookmarks
+              </button>
+              
+              {/* Profile link for Mobile - NEW */}
+              <button 
+                  onClick={() => handleNavigation("profile")} 
+                  className={`flex items-center w-full p-3 rounded-lg text-lg font-medium transition ${page === "profile" ? "bg-blue-500 text-white" : "text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
+              >
+                  <HiUserCircle className="w-6 h-6 mr-3" />
+                  Profile
               </button>
           </div>
         </div>
