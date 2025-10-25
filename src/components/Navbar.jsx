@@ -1,21 +1,45 @@
 import React, { useState } from "react";
-// Import all necessary icons (including HiUserCircle)
 import { HiSun, HiMoon, HiBookmark, HiChartBar, HiMenu, HiX, HiHome, HiPhotograph, HiUserCircle } from "react-icons/hi"; 
+// 1. Import useNavigate and useLocation
+import { useNavigate, useLocation } from "react-router-dom"; 
 
-const Navbar = ({ theme, toggleTheme, searchQuery, setSearchQuery, page, setPage }) => {
+// 'page' and 'setPage' are removed from props
+const Navbar = ({ theme, toggleTheme, searchQuery, setSearchQuery }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false); 
+  // 2. Initialize hooks
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const handleNavigation = (newPage) => {
-    setPage(newPage);
+  const handleNavigation = (path) => {
+    navigate(path); // Use React Router's navigate function
     setIsMenuOpen(false);
     window.speechSynthesis.cancel();
   };
 
+  const navItems = [
+    { name: "Home", path: "/home", icon: HiHome },
+    { name: "Reels", path: "/reels", icon: HiPhotograph },
+    { name: "Analytics", path: "/analytics", icon: HiChartBar },
+    { name: "Bookmarks", path: "/bookmarks", icon: HiBookmark },
+    { name: "Profile", path: "/profile", icon: HiUserCircle },
+  ];
+
+  const getLinkClasses = (path) => 
+    `flex items-center gap-1 cursor-pointer transition ${
+      location.pathname === path ? "text-blue-600 dark:text-blue-400 font-bold" : "text-gray-700 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-300"
+    }`;
+
+  const getMobileButtonClasses = (path) =>
+    `flex items-center w-full p-3 rounded-lg text-lg font-medium transition ${
+      location.pathname === path ? "bg-blue-500 text-white" : "text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+    }`;
+
+
   return (
     <div className="w-full fixed top-0 z-50 bg-white/90 dark:bg-black/90 backdrop-blur-sm transition-colors duration-300 shadow-md dark:shadow-gray-900/50">
       <div className="max-w-7xl mx-auto flex justify-between items-center py-3 px-6 md:px-12">
-        {/* LOGO */}
-        <div className="flex items-center gap-2 cursor-pointer" onClick={() => handleNavigation("home")}>
+        {/* LOGO - Navigate to Home */}
+        <div className="flex items-center gap-2 cursor-pointer" onClick={() => handleNavigation("/home")}>
           <span className="text-gray-900 dark:text-white text-2xl font-bold">
             News<span className="text-blue-500">Pulse</span>
           </span>
@@ -30,57 +54,22 @@ const Navbar = ({ theme, toggleTheme, searchQuery, setSearchQuery, page, setPage
           {/* DESKTOP LINKS GROUP */}
           <div className="hidden md:flex gap-6 items-center">
               
-              {/* HOME Link */}
-              <div 
-                  onClick={() => handleNavigation("home")}
-                  className={`flex items-center gap-1 cursor-pointer transition ${page === "home" ? "text-blue-600 dark:text-blue-400 font-bold" : "text-gray-700 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-300"}`}
-              >
-                  <HiHome className="w-5 h-5" />
-                  <span className="hidden lg:block text-sm">Home</span>
-              </div>
+              {navItems.map((item) => (
+                  <div 
+                    key={item.name}
+                    onClick={() => handleNavigation(item.path)}
+                    className={getLinkClasses(item.path)}
+                  >
+                      <item.icon className="w-5 h-5" />
+                      <span className="hidden lg:block text-sm">{item.name}</span>
+                  </div>
+              ))}
               
-              {/* Reels Link */}
-              <div 
-                  onClick={() => handleNavigation("reels")}
-                  className={`flex items-center gap-1 cursor-pointer transition ${page === "reels" ? "text-blue-600 dark:text-blue-400 font-bold" : "text-gray-700 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-300"}`}
-              >
-                  <HiPhotograph className="w-5 h-5" />
-                  <span className="hidden lg:block text-sm">Reels</span>
-              </div>
-              
-              {/* Analytics Link */}
-              <div 
-                  onClick={() => handleNavigation("analytics")}
-                  className={`flex items-center gap-1 cursor-pointer transition ${page === "analytics" ? "text-blue-600 dark:text-blue-400 font-bold" : "text-gray-700 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-300"}`}
-              >
-                  <HiChartBar className="w-5 h-5" />
-                  <span className="hidden lg:block text-sm">Analytics</span>
-              </div>
-
-              {/* Bookmarks link */}
-              <div 
-                  onClick={() => handleNavigation("bookmarks")} 
-                  className={`flex items-center gap-1 cursor-pointer transition ${page === "bookmarks" ? "text-blue-600 dark:text-blue-400 font-bold" : "text-gray-700 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-300"}`}
-              >
-                  <HiBookmark className="w-5 h-5" />
-                  <span className="hidden lg:block text-sm">Bookmarks</span>
-              </div>
-              
-              {/* Profile link - NEW */}
-              <div 
-                  onClick={() => handleNavigation("profile")} 
-                  className={`flex items-center gap-1 cursor-pointer transition ${page === "profile" ? "text-blue-600 dark:text-blue-400 font-bold" : "text-gray-700 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-300"}`}
-              >
-                  <HiUserCircle className="w-6 h-6" />
-                  <span className="hidden lg:block text-sm">Profile</span>
-              </div>
-
           </div>
           
           {/* Theme Toggle - Enhanced Transitions */}
           <div
             onClick={toggleTheme}
-            // Ensure transitions are applied to the parent container for background/shadow changes
             className={`flex w-14 h-8 rounded-full shadow-inner p-1 cursor-pointer transition-all duration-500 ease-in-out ${
               theme === "dark" ? "bg-gray-700 justify-end" : "bg-yellow-400 justify-start"
             }`}
@@ -115,50 +104,17 @@ const Navbar = ({ theme, toggleTheme, searchQuery, setSearchQuery, page, setPage
         <div className="absolute top-full left-0 w-full md:hidden bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shadow-xl transition-all duration-300 ease-in-out">
           <div className="flex flex-col p-4 space-y-2">
               
-              {/* HOME Link for Mobile */}
-              <button 
-                  onClick={() => handleNavigation("home")}
-                  className={`flex items-center w-full p-3 rounded-lg text-lg font-medium transition ${page === "home" ? "bg-blue-500 text-white" : "text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
-              >
-                  <HiHome className="w-6 h-6 mr-3" />
-                  Home
-              </button>
+              {navItems.map((item) => (
+                  <button 
+                    key={item.name}
+                    onClick={() => handleNavigation(item.path)}
+                    className={getMobileButtonClasses(item.path)}
+                  >
+                      <item.icon className="w-6 h-6 mr-3" />
+                      {item.name}
+                  </button>
+              ))}
               
-              {/* Reels Link for Mobile */}
-              <button 
-                  onClick={() => handleNavigation("reels")}
-                  className={`flex items-center w-full p-3 rounded-lg text-lg font-medium transition ${page === "reels" ? "bg-blue-500 text-white" : "text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
-              >
-                  <HiPhotograph className="w-6 h-6 mr-3" />
-                  Reels
-              </button>
-
-              {/* Analytics Link for Mobile */}
-              <button 
-                  onClick={() => handleNavigation("analytics")}
-                  className={`flex items-center w-full p-3 rounded-lg text-lg font-medium transition ${page === "analytics" ? "bg-blue-500 text-white" : "text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
-              >
-                  <HiChartBar className="w-6 h-6 mr-3" />
-                  Analytics
-              </button>
-
-              {/* Bookmarks link for Mobile */}
-              <button 
-                  onClick={() => handleNavigation("bookmarks")} 
-                  className={`flex items-center w-full p-3 rounded-lg text-lg font-medium transition ${page === "bookmarks" ? "bg-blue-500 text-white" : "text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
-              >
-                  <HiBookmark className="w-6 h-6 mr-3" />
-                  Bookmarks
-              </button>
-              
-              {/* Profile link for Mobile - NEW */}
-              <button 
-                  onClick={() => handleNavigation("profile")} 
-                  className={`flex items-center w-full p-3 rounded-lg text-lg font-medium transition ${page === "profile" ? "bg-blue-500 text-white" : "text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
-              >
-                  <HiUserCircle className="w-6 h-6 mr-3" />
-                  Profile
-              </button>
           </div>
         </div>
       )}

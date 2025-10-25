@@ -1,8 +1,12 @@
 import React from "react";
 import { FaTwitter, FaFacebookF, FaInstagram, FaLinkedinIn } from "react-icons/fa";
 import { HiArrowUp } from "react-icons/hi"; 
+// 1. Import useNavigate
+import { useNavigate } from "react-router-dom"; 
 
 const LandingFooter = () => {
+  // 2. Initialize useNavigate
+  const navigate = useNavigate();
     
   const socialIcons = [
     { icon: <FaTwitter size={20} />, href: "#" },
@@ -16,8 +20,25 @@ const LandingFooter = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
     
+  // Helper function for navigation from the footer
+  const handleFooterNavigation = (path) => {
+    navigate(path);
+    // Smooth scroll to top after navigation for consistency
+    scrollToTop(); 
+  };
+
+  const handleFeatureScroll = () => {
+     // Check if we are on the landing page (root path) before scrolling
+     if (window.location.pathname === '/') {
+        document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' });
+     } else {
+        // Navigate to the landing page, where the scroll logic should handle it
+        navigate("/");
+        // A full implementation would navigate with a hash, but simple navigate is cleaner here.
+     }
+  }
+
   return (
-    // Updated background and padding for a richer, solid dark look with a subtle top border accent
     <footer className="w-full bg-gray-950 py-16 text-gray-300 relative border-t border-blue-500/20">
       <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-start justify-between gap-12">
         
@@ -68,19 +89,25 @@ const LandingFooter = () => {
           <h3 className="text-xl font-bold text-white mb-4 border-b border-gray-800 pb-2">Navigate</h3>
           <ul className="space-y-3 text-gray-400">
             <li>
-                <button onClick={scrollToTop} className="hover:text-blue-400 transition text-base">Home</button>
+                {/* 3. Use handleFooterNavigation for routing */}
+                <button onClick={() => handleFooterNavigation("/")} className="hover:text-blue-400 transition text-base">Home</button>
             </li>
             <li>
                 <button 
-                    // This relies on the 'features' ID being present in Landing.jsx
-                    onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })} 
+                    onClick={handleFeatureScroll} 
                     className="hover:text-blue-400 transition text-base"
                 >
                     Features
                 </button>
             </li>
-            <li><button onClick={() => alert('Bookmarks page will load the main app.')} className="hover:text-blue-400 transition text-base">Bookmarks</button></li>
-            <li><button onClick={() => alert('Analytics page will load the main app.')} className="hover:text-blue-400 transition text-base">Analytics</button></li>
+            <li>
+                {/* 3. Use handleFooterNavigation for routing */}
+                <button onClick={() => handleFooterNavigation("/bookmarks")} className="hover:text-blue-400 transition text-base">Bookmarks</button>
+            </li>
+            <li>
+                {/* 3. Use handleFooterNavigation for routing */}
+                <button onClick={() => handleFooterNavigation("/analytics")} className="hover:text-blue-400 transition text-base">Analytics</button>
+            </li>
           </ul>
         </div>
 
@@ -93,7 +120,6 @@ const LandingFooter = () => {
                     key={index}
                     href={item.href} 
                     className="text-gray-500 hover:text-blue-400 transition transform hover:scale-110"
-                    // Best practice: add an aria-label for accessibility
                     aria-label={`Follow us on ${item.icon.type.name.replace('Fa', '')}`} 
                 >
                     {item.icon}

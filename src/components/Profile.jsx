@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { HiUserCircle, HiMail, HiKey, HiArrowLeft, HiLogout, HiMailOpen } from "react-icons/hi";
+// 1. Import useNavigate
+import { useNavigate } from "react-router-dom"; 
 
 // Mock User Data for demonstration
 const mockUser = {
@@ -20,8 +22,10 @@ const CATEGORIES = [
     "Science",
 ];
 
-// ACCEPT 'bookmarks' prop
-const Profile = ({ setPage, bookmarks = [] }) => {
+// 2. Remove 'setPage' prop
+const Profile = ({ bookmarks = [] }) => {
+    // 3. Initialize useNavigate
+    const navigate = useNavigate();
     // Mock state for user preferences
     const [receivesEmails, setReceivesEmails] = useState(true);
     const [preferences, setPreferences] = useState(['General', 'Technology']);
@@ -31,7 +35,8 @@ const Profile = ({ setPage, bookmarks = [] }) => {
         // In a real app: Clear token, clear user state, then redirect.
         console.log("User logged out.");
         alert("Logged out successfully! Redirecting to Landing Page.");
-        setPage("landing"); // <--- CHANGED FROM "login" TO "landing"
+        // 4. Use navigate to the root path
+        navigate("/"); 
     };
     
     const handleCategoryToggle = (category) => {
@@ -115,7 +120,8 @@ const Profile = ({ setPage, bookmarks = [] }) => {
                     </button>
                     
                     <button 
-                        onClick={() => setPage("home")}
+                        // 4. Use navigate
+                        onClick={() => navigate("/home")}
                         className="w-full flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700/70 transition"
                     >
                         <span className="flex items-center gap-3 text-lg font-medium text-gray-800 dark:text-gray-200">

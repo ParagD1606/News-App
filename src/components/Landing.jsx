@@ -1,12 +1,11 @@
 import React, { useRef } from "react";
+// 1. Import useNavigate
+import { useNavigate } from "react-router-dom"; 
 import Aurora from "../Usages/Aurora";
-// Import the new footer component
 import LandingFooter from "./LandingFooter";
-// Imported icons for the new features section and the scroll down button
 import { HiChartBar, HiBookmark, HiHome, HiVolumeUp, HiArrowDown, HiSearch, HiMoon, HiArrowRight, HiViewList, HiNewspaper } from "react-icons/hi"; 
 
 const FeatureCard = ({ icon, title, description }) => (
-    // Stylish card design with hover effect, suitable for a dark, futuristic theme
     <div className="bg-white/10 backdrop-blur-sm p-6 rounded-xl border border-gray-700/50 shadow-2xl transition duration-500 hover:bg-white/20 hover:scale-[1.02] cursor-default">
         <div className="text-blue-400 mb-3">{icon}</div>
         <h3 className="text-xl font-bold text-white mb-2">{title}</h3>
@@ -15,8 +14,10 @@ const FeatureCard = ({ icon, title, description }) => (
 );
 
 
-const Landing = ({ setPage }) => {
+// 2. Remove 'setPage' prop
+const Landing = () => {
   const featuresRef = useRef(null);
+  const navigate = useNavigate(); // 3. Initialize useNavigate
   
   // Function to smoothly scroll down to the features section
   const scrollToFeatures = () => {
@@ -24,7 +25,6 @@ const Landing = ({ setPage }) => {
   };
   
   return (
-    // The wrapper uses bg-black and min-h-screen to ensure full coverage
     <div className="relative w-full min-h-screen overflow-x-hidden bg-black"> 
       
       {/* 1. Hero Section (Full Viewport Height) */}
@@ -32,7 +32,7 @@ const Landing = ({ setPage }) => {
         {/* Aurora background - Using a cooler color palette */}
         <div className="absolute inset-0">
           <Aurora
-            colorStops={["#5227ff", "#00bcd4", "#7cff67"]} // Blue, Cyan, Green gradient
+            colorStops={["#5227ff", "#00bcd4", "#7cff67"]} 
             blend={0.5}
             amplitude={1.0}
             speed={0.5}
@@ -42,15 +42,12 @@ const Landing = ({ setPage }) => {
         {/* Overlay content (Hero) */}
         <div className="relative z-10 flex flex-col items-center justify-center h-full text-center text-white p-6">
           
-          {/* Animated Headline: Fade in + slight upward movement */}
           <h1 
             className="text-6xl md:text-8xl font-extrabold mb-4 leading-tight tracking-tight 
                        opacity-0 animate-fade-in-up delay-300" 
             style={{ 
-                // Custom animation simulation using Tailwind's properties
                 animation: 'fade-in-up 1s ease-out forwards',
                 animationDelay: '300ms',
-                // Start position (will be fixed by the actual CSS framework if custom animation is defined)
                 transform: 'translateY(20px)',
                 opacity: 0,
             }}
@@ -58,7 +55,6 @@ const Landing = ({ setPage }) => {
             News<span className="text-blue-400">Pulse</span>
           </h1>
           
-          {/* Animated Subtitle: Fade in + slight upward movement (Delayed) */}
           <p 
             className="text-xl md:text-2xl mb-10 font-light text-gray-200 max-w-2xl 
                        opacity-0 animate-fade-in-up delay-700"
@@ -72,11 +68,11 @@ const Landing = ({ setPage }) => {
             Your personalized source for trending headlines, instant audio reels, and in-depth analytics.
           </p>
           
-          {/* Animated Buttons: Fade in (Further delayed) */}
           <div className="flex space-x-4">
               {/* Get Started Button - NOW POINTS TO REGISTRATION */}
               <button
-                onClick={() => setPage("registration")} 
+                // 4. Use navigate for registration path
+                onClick={() => navigate("/registration")} 
                 className="px-8 py-3 bg-blue-500 text-white text-lg font-semibold rounded-full 
                            hover:bg-blue-600 transition duration-300 transform hover:scale-105 shadow-xl shadow-blue-500/30
                            opacity-0 animate-fade-in delay-1000"
@@ -118,7 +114,6 @@ const Landing = ({ setPage }) => {
             Key Features
           </h2>
           
-          {/* UPDATED GRID: Changed lg:grid-cols-4 to lg:grid-cols-3 */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             
             <FeatureCard
@@ -169,7 +164,6 @@ const Landing = ({ setPage }) => {
                 description="Experience smooth navigation through extensive search results with optimized pagination controls."
             />
             
-            {/* NEW CARD: Email Digest */}
             <FeatureCard
                 icon={<HiNewspaper className="w-8 h-8" />}
                 title="Custom Daily Email Digest"

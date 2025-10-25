@@ -1,13 +1,18 @@
 import React, { useState } from "react";
-import { HiMail, HiLockClosed, HiArrowLeft } from "react-icons/hi"; // Imported HiArrowLeft
+import { HiMail, HiLockClosed, HiArrowLeft } from "react-icons/hi"; 
+// 1. Import useNavigate
+import { useNavigate } from "react-router-dom"; 
 
-const Login = ({ setPage }) => {
+// 2. Remove 'setPage' prop
+const Login = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  // 3. Initialize useNavigate
+  const navigate = useNavigate(); 
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -35,7 +40,8 @@ const Login = ({ setPage }) => {
     
     // Simulate redirect after 2 seconds
     setTimeout(() => {
-        setPage("home");
+        // 4. Use navigate
+        navigate("/home");
     }, 2000);
   };
 
@@ -99,7 +105,8 @@ const Login = ({ setPage }) => {
         
         {/* Switch to Registration */}
         <button
-            onClick={() => setPage("registration")}
+            // 4. Use navigate
+            onClick={() => navigate("/registration")}
             className="mt-6 w-full text-center text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 transition"
         >
             Don't have an account? Register now.
@@ -107,7 +114,8 @@ const Login = ({ setPage }) => {
 
         {/* New: Bypass to Home Feed */}
         <button
-            onClick={() => setPage("home")} 
+            // 4. Use navigate
+            onClick={() => navigate("/home")} 
             className="mt-2 w-full text-center text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-green-500 dark:hover:text-green-400 transition flex items-center justify-center gap-1"
         >
             <HiArrowLeft className="w-4 h-4" />

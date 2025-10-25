@@ -1,8 +1,14 @@
 import React from "react";
 import { HiBookmark, HiArrowLeft } from "react-icons/hi"; 
 import NewsCard from "./NewsCard";
+// 1. Import useNavigate
+import { useNavigate } from "react-router-dom"; 
 
-const Bookmarks = ({ bookmarks, handleBookmark, setPage }) => {
+// 2. Remove 'setPage' prop
+const Bookmarks = ({ bookmarks, handleBookmark }) => {
+  // 3. Initialize useNavigate
+  const navigate = useNavigate();
+  
   return (
     <div className="max-w-7xl mx-auto p-6 pt-9 min-h-screen">
       
@@ -26,7 +32,8 @@ const Bookmarks = ({ bookmarks, handleBookmark, setPage }) => {
             Start saving your favorite headlines from the Home page.
           </p>
           <button
-            onClick={() => setPage("home")}
+            // 4. Use navigate
+            onClick={() => navigate("/home")}
             className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-full 
                        hover:bg-blue-700 transition flex items-center gap-2 mx-auto shadow-md hover:shadow-lg"
           >
@@ -35,7 +42,7 @@ const Bookmarks = ({ bookmarks, handleBookmark, setPage }) => {
           </button>
         </div>
       ) : (
-        <main className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"> {/* Increased gap and added xl column */}
+        <main className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {bookmarks.map((article, idx) => (
             <NewsCard
               key={idx}

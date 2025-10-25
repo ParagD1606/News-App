@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { HiPlay, HiPause } from "react-icons/hi"; 
-import { HiArrowLeft } from "react-icons/hi"; // Re-added HiArrowLeft for empty state
+import { HiArrowLeft } from "react-icons/hi"; 
+// 1. Import useNavigate
+import { useNavigate } from "react-router-dom"; 
 
 const filterArticles = (articles) => 
   articles.filter(article => article.urlToImage && (article.description || article.content));
@@ -8,7 +10,10 @@ const filterArticles = (articles) =>
 // Delay duration for the play/pause icon to fade out
 const ICON_FADE_DURATION = 1500; 
 
-const Reels = ({ articles, setPage }) => {
+// 2. Remove 'setPage' prop
+const Reels = ({ articles }) => {
+  // 3. Initialize useNavigate
+  const navigate = useNavigate();
   // --- STATE and REFS ---
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -120,7 +125,8 @@ const Reels = ({ articles, setPage }) => {
         </p>
         {/* Fallback button included for accessibility in empty state */}
         <button
-            onClick={() => setPage("home")}
+            // 4. Use navigate
+            onClick={() => navigate("/home")}
             className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition flex items-center gap-2 mx-auto shadow-md hover:shadow-lg"
           >
             Go to Home Feed
