@@ -14,7 +14,6 @@
     "chart.js": "^4.5.1",
     "d3-hierarchy": "^3.1.2",
     "dotenv": "^17.2.3",
-    "lucide-react": "^0.548.0",
     "ogl": "^0.0.107",
     "react": "^19.1.1",
     "react-chartjs-2": "^5.3.0",
