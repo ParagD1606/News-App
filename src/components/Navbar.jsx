@@ -1,16 +1,21 @@
-import React from "react";
-import { HiSun, HiMoon, HiBookmark, HiChartBar, HiSearch } from "react-icons/hi";
+import React, { useState } from "react";
+// Import all necessary icons
+import { HiSun, HiMoon, HiBookmark, HiChartBar, HiMenu, HiX, HiSearch, HiHome, HiPhotograph } from "react-icons/hi"; 
 
 const Navbar = ({ theme, toggleTheme, searchQuery, setSearchQuery, page, setPage }) => {
-  const handleSearchChange = (event) => {
-    setSearchQuery(event.target.value);
-    setPage("home"); // Automatically go to home page on search
+  const [isMenuOpen, setIsMenuOpen] = useState(false); 
+
+  const handleNavigation = (newPage) => {
+    setPage(newPage);
+    setIsMenuOpen(false);
+    window.speechSynthesis.cancel();
   };
 
   return (
-    <div className="w-full fixed top-0 z-50 bg-white/80 dark:bg-black/80 backdrop-blur-md transition-colors duration-300">
+    <div className="w-full fixed top-0 z-50 bg-white/90 dark:bg-black/90 backdrop-blur-sm transition-colors duration-300 shadow-md dark:shadow-gray-900/50">
       <div className="max-w-7xl mx-auto flex justify-between items-center py-3 px-6 md:px-12">
-        <div className="flex items-center gap-2 cursor-pointer" onClick={() => setPage("home")}>
+        {/* LOGO */}
+        <div className="flex items-center gap-2 cursor-pointer" onClick={() => handleNavigation("home")}>
           <span className="text-gray-900 dark:text-white text-2xl font-bold">
             News<span className="text-blue-500">Pulse</span>
           </span>
@@ -19,60 +24,125 @@ const Navbar = ({ theme, toggleTheme, searchQuery, setSearchQuery, page, setPage
           </span>
         </div>
 
-        {/* Search Bar (Desktop) */}
-        <div className="relative w-full max-w-sm mx-4 hidden md:block">
-          <input
-            type="text"
-            placeholder="Search news articles..."
-            value={searchQuery}
-            onChange={handleSearchChange}
-            className="w-full py-2 pl-10 pr-4 border border-gray-300 dark:border-gray-700 rounded-full bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
-          />
-          <HiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500 dark:text-gray-400" />
-        </div>
-        {/* End Search Bar */}
-
+        {/* Desktop Navigation Links & Theme Toggle */}
         <div className="flex gap-4 items-center">
           
-          {/* Mobile Search Input */}
-          <div className="relative block md:hidden">
-             <input
-              type="text"
-              placeholder="Search..."
-              value={searchQuery}
-              onChange={handleSearchChange}
-              className="w-24 py-1 pl-7 pr-1 border border-gray-300 dark:border-gray-700 rounded-full bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500 transition text-sm"
-            />
-            <HiSearch className="absolute left-1 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500 dark:text-gray-400" />
-          </div>
+          {/* DESKTOP LINKS GROUP */}
+          <div className="hidden md:flex gap-6 items-center">
+              
+              {/* HOME Link */}
+              <div 
+                  onClick={() => handleNavigation("home")}
+                  className={`flex items-center gap-1 cursor-pointer transition ${page === "home" ? "text-blue-600 dark:text-blue-400 font-bold" : "text-gray-700 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-300"}`}
+              >
+                  <HiHome className="w-5 h-5" />
+                  <span className="hidden lg:block text-sm">Home</span>
+              </div>
+              
+              {/* Reels Link */}
+              <div 
+                  onClick={() => handleNavigation("reels")}
+                  className={`flex items-center gap-1 cursor-pointer transition ${page === "reels" ? "text-blue-600 dark:text-blue-400 font-bold" : "text-gray-700 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-300"}`}
+              >
+                  <HiPhotograph className="w-5 h-5" />
+                  <span className="hidden lg:block text-sm">Reels</span>
+              </div>
+              
+              {/* Analytics Link */}
+              <div 
+                  onClick={() => handleNavigation("analytics")}
+                  className={`flex items-center gap-1 cursor-pointer transition ${page === "analytics" ? "text-blue-600 dark:text-blue-400 font-bold" : "text-gray-700 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-300"}`}
+              >
+                  <HiChartBar className="w-5 h-5" />
+                  <span className="hidden lg:block text-sm">Analytics</span>
+              </div>
 
-          <button
+              {/* Bookmarks link */}
+              <div 
+                  onClick={() => handleNavigation("bookmarks")} 
+                  className={`flex items-center gap-1 cursor-pointer transition ${page === "bookmarks" ? "text-blue-600 dark:text-blue-400 font-bold" : "text-gray-700 dark:text-gray-300 hover:text-blue-500 dark:hover:text-blue-300"}`}
+              >
+                  <HiBookmark className="w-5 h-5" />
+                  <span className="hidden lg:block text-sm">Bookmarks</span>
+              </div>
+          </div>
+          
+          {/* Theme Toggle - Enhanced Transitions */}
+          <div
             onClick={toggleTheme}
-            className="p-2 rounded-full bg-transparent text-yellow-400 dark:text-blue-400 transition"
+            // Ensure transitions are applied to the parent container for background/shadow changes
+            className={`flex w-14 h-8 rounded-full shadow-inner p-1 cursor-pointer transition-all duration-500 ease-in-out ${
+              theme === "dark" ? "bg-gray-700 justify-end" : "bg-yellow-400 justify-start"
+            }`}
             title={theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
           >
-            {theme === "dark" ? <HiSun className="w-6 h-6" /> : <HiMoon className="w-6 h-6" />}
+            {/* Sliding Circle/Knob */}
+            <div className={`w-6 h-6 rounded-full shadow-lg flex items-center justify-center transition-all duration-500 ease-in-out ${
+              theme === "dark" ? "bg-gray-900" : "bg-white"
+            }`}>
+              {theme === "dark" ? (
+                <HiMoon className="w-4 h-4 text-blue-400" />
+              ) : (
+                <HiSun className="w-4 h-4 text-yellow-500" />
+              )}
+            </div>
+          </div>
+          
+          {/* MOBILE HAMBURGER BUTTON (Visible on mobile only) */}
+          <button
+            className="p-2 rounded-full text-gray-800 dark:text-gray-200 md:hidden hover:bg-gray-200/50 dark:hover:bg-gray-700/50"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            title="Toggle Menu"
+          >
+            {isMenuOpen ? <HiX className="w-6 h-6" /> : <HiMenu className="w-6 h-6" />}
           </button>
 
-          {/* Analytics Link */}
-          <div 
-            onClick={() => setPage("analytics")}
-            className={`flex items-center gap-1 cursor-pointer transition ${page === "analytics" ? "text-blue-500 dark:text-blue-400" : "text-gray-800 dark:text-gray-200"}`}
-          >
-            <HiChartBar className="w-5 h-5" />
-            <span className="hidden sm:block">Analytics</span>
-          </div>
-
-          {/* Bookmarks link */}
-          <div 
-            onClick={() => setPage("bookmarks")} 
-            className={`flex items-center gap-1 cursor-pointer transition ${page === "bookmarks" ? "text-blue-500 dark:text-blue-400" : "text-gray-800 dark:text-gray-200"}`}
-          >
-            <HiBookmark className="w-5 h-5" />
-            <span className="hidden sm:block">Bookmarks</span>
-          </div>
         </div>
       </div>
+      
+      {/* MOBILE MENU (Absolute overlay) */}
+      {isMenuOpen && (
+        <div className="absolute top-full left-0 w-full md:hidden bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shadow-xl transition-all duration-300 ease-in-out">
+          <div className="flex flex-col p-4 space-y-2">
+              
+              {/* HOME Link for Mobile */}
+              <button 
+                  onClick={() => handleNavigation("home")}
+                  className={`flex items-center w-full p-3 rounded-lg text-lg font-medium transition ${page === "home" ? "bg-blue-500 text-white" : "text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
+              >
+                  <HiHome className="w-6 h-6 mr-3" />
+                  Home
+              </button>
+              
+              {/* Reels Link for Mobile */}
+              <button 
+                  onClick={() => handleNavigation("reels")}
+                  className={`flex items-center w-full p-3 rounded-lg text-lg font-medium transition ${page === "reels" ? "bg-blue-500 text-white" : "text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
+              >
+                  <HiPhotograph className="w-6 h-6 mr-3" />
+                  Reels
+              </button>
+
+              {/* Analytics Link for Mobile */}
+              <button 
+                  onClick={() => handleNavigation("analytics")}
+                  className={`flex items-center w-full p-3 rounded-lg text-lg font-medium transition ${page === "analytics" ? "bg-blue-500 text-white" : "text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
+              >
+                  <HiChartBar className="w-6 h-6 mr-3" />
+                  Analytics
+              </button>
+
+              {/* Bookmarks link for Mobile */}
+              <button 
+                  onClick={() => handleNavigation("bookmarks")} 
+                  className={`flex items-center w-full p-3 rounded-lg text-lg font-medium transition ${page === "bookmarks" ? "bg-blue-500 text-white" : "text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
+              >
+                  <HiBookmark className="w-6 h-6 mr-3" />
+                  Bookmarks
+              </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

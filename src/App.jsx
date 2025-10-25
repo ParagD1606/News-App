@@ -3,18 +3,17 @@ import Home from "./components/Home";
 import Bookmarks from "./components/Bookmarks";
 import Navbar from "./components/Navbar";
 import Analytics from "./components/Analytics";
-import Landing from "./components/Landing"; // NEW IMPORT
+import Landing from "./components/Landing"; 
+import Reels from "./components/Reels"; 
 import { fetchTopHeadlines } from "./services/newsApi";
 
 const App = () => {
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
-  // UPDATED: Default page is now "landing"
   const [page, setPage] = useState("landing"); 
   const [bookmarks, setBookmarks] = useState(() =>
     JSON.parse(localStorage.getItem("bookmarks") || "[]")
   );
   
-  // MOVED STATE FROM HOME.JSX
   const [newsArticles, setNewsArticles] = useState([]);
   const [category, setCategory] = useState("general");
   const [searchQuery, setSearchQuery] = useState(""); 
@@ -39,7 +38,7 @@ const App = () => {
         };
         loadNews();
     }
-  }, [category, searchQuery, page]); // Dependency on page added to trigger fetch on exit from landing
+  }, [category, searchQuery, page]); 
   
   // Bookmark handler
   const handleBookmark = (article) => {
@@ -56,8 +55,9 @@ const App = () => {
   const toggleTheme = () => setTheme(theme === "light" ? "dark" : "light");
 
   const renderPage = () => {
-    if (page === "landing") { // NEW: Landing Page Route
-        return <Landing setPage={setPage} theme={theme} />;
+    if (page === "landing") { 
+        // NOTE: theme prop is no longer needed on Landing since it manages its own background
+        return <Landing setPage={setPage} />; 
     }
     
     if (page === "home") {
@@ -73,6 +73,17 @@ const App = () => {
         />
       );
     } 
+    
+    if (page === "reels") { 
+        return (
+            <Reels
+                articles={newsArticles}
+                setPage={setPage}
+                currentCategory={category}
+                searchQuery={searchQuery}
+            />
+        );
+    }
     
     if (page === "bookmarks") {
       return (
@@ -98,9 +109,14 @@ const App = () => {
   };
 
   const showNavbar = page !== 'landing';
+  
+  // Conditional classes for the main wrapper
+  const themeClasses = page !== 'landing' 
+    ? "bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100" // Apply theme colors
+    : "bg-black"; // Use a single, non-theme-dependent background for landing page wrapper
 
   return (
-    <div className="relative w-full min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300 overflow-x-hidden">
+    <div className={`relative w-full min-h-screen transition-colors duration-300 overflow-x-hidden ${themeClasses}`}>
       {/* Navbar only shows if not on the landing page */}
       {showNavbar && (
         <Navbar 

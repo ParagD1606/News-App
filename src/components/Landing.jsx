@@ -1,13 +1,12 @@
 import React from 'react'
-import LiquidEther from '../Usages/LiquidEther.jsx'
+import Aurora from '../Usages/Aurora'
 
 const Landing = () => {
   return (
-    <div className="relative overflow-hidden w-full h-full touch-none">
-      <LiquidEther />
+    <div className="w-full h-screen overflow-hidden">
+      <Aurora />
     </div>
   )
 }
-
 
 export default Landing

@@ -4,7 +4,7 @@ import NewsCard from "./NewsCard";
 
 const Bookmarks = ({ bookmarks, handleBookmark, setPage }) => {
   return (
-    <div className="max-w-7xl mx-auto p-6 pt-24 min-h-screen">
+    <div className="max-w-7xl mx-auto p-6 pt-9 min-h-screen">
       
       {/* Enhanced Header */}
       <div className="flex items-center justify-between pb-4 mb-6 border-b border-gray-300 dark:border-gray-700">

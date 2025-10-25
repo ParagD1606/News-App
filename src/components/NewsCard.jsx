@@ -1,7 +1,22 @@
-import React from "react";
-import { HiOutlineBookmark, HiBookmark } from "react-icons/hi";
+import React, { useCallback } from "react";
+import { HiOutlineBookmark, HiBookmark, HiVolumeUp } from "react-icons/hi"; 
 
 const NewsCard = ({ article, onBookmark, isBookmarked }) => {
+  // NEW FUNCTION: Handle Text-to-Speech
+  const handleTextToSpeech = useCallback(() => {
+    // Combine title and description for speech
+    const textToSpeak = `${article.title}. ${article.description || article.content || "No description available."}`;
+
+    // Use the Web Speech API
+    const utterance = new SpeechSynthesisUtterance(textToSpeak);
+    
+    // Stop any current speech and start the new one
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utterance);
+    
+  }, [article.title, article.description, article.content]);
+
+
   return (
     // UPDATED: Added shadow-lg, shadow-blue-500/10, hover:shadow-xl, 
     // and dark:border for better contrast and effect.
@@ -22,23 +37,40 @@ const NewsCard = ({ article, onBookmark, isBookmarked }) => {
         {article.description || "No description available for this article."}
       </p>
 
+      {/* MODIFIED: Changed structure to move the TTS button to the right. */}
       <div className="flex justify-between items-center pt-2 border-t border-gray-100 dark:border-gray-700/50">
+        
+        {/* LEFT SIDE: Read Full Article Link */}
         <a
-          href={article.url}
-          target="_blank"
-          rel="noreferrer"
-          className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline transition"
+            href={article.url}
+            target="_blank"
+            rel="noreferrer"
+            className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline transition"
         >
-          Read Full Article →
+            Read Full Article →
         </a>
 
-        <div onClick={() => onBookmark(article)} className="cursor-pointer p-1" title={isBookmarked ? "Remove Bookmark" : "Add Bookmark"}>
-          {isBookmarked ? (
-            // Use a stronger color for the active bookmark icon
-            <HiBookmark className="w-7 h-7 text-yellow-500 hover:text-yellow-400 transition transform hover:scale-110" />
-          ) : (
-            <HiOutlineBookmark className="w-7 h-7 text-gray-500 dark:text-gray-300 hover:text-yellow-500 transition transform hover:scale-110" />
-          )}
+
+        {/* RIGHT SIDE GROUP: TTS Button and Bookmark Icon */}
+        <div className="flex items-center gap-3">
+            {/* Text-to-Speech Button (NOW ON RIGHT) */}
+            <button
+                onClick={handleTextToSpeech}
+                title="Listen to Article Summary"
+                className="p-1 rounded-full text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 transition transform hover:scale-110"
+            >
+                <HiVolumeUp className="w-5 h-5" />
+            </button>
+
+            {/* Bookmark Icon (RIGHTMOST) */}
+            <div onClick={() => onBookmark(article)} className="cursor-pointer p-1" title={isBookmarked ? "Remove Bookmark" : "Add Bookmark"}>
+            {isBookmarked ? (
+                // Use a stronger color for the active bookmark icon
+                <HiBookmark className="w-7 h-7 text-yellow-500 hover:text-yellow-400 transition transform hover:scale-110" />
+            ) : (
+                <HiOutlineBookmark className="w-7 h-7 text-gray-500 dark:text-gray-300 hover:text-yellow-500 transition transform hover:scale-110" />
+            )}
+            </div>
         </div>
       </div>
     </div>
