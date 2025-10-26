@@ -1,24 +1,16 @@
 import axios from "axios";
 
 const API_KEY = import.meta.env.VITE_API_KEY;
-const BASE_URL = import.meta.env.VITE_BASE_URL;
+const BASE_URL = import.meta.env.VITE_BASE_URL; // e.g., "https://newsapi.org/v2"
 
-// Supported countries only
-export const SUPPORTED_COUNTRIES = ["us", "in", "cn", "ru", "jp"];
+export const SUPPORTED_COUNTRIES = ["us"];
 
-// Fetch top headlines for a given category, query, and country
-export const fetchTopHeadlines = async (
-  category = "general",
-  query = "",
-  country = "us"
-) => {
+export const fetchTopHeadlines = async (category = "general", query = "") => {
   try {
-    if (!SUPPORTED_COUNTRIES.includes(country)) country = "us";
-
     const res = await axios.get(`${BASE_URL}/top-headlines`, {
       params: {
         apiKey: API_KEY,
-        country,
+        country: "us",
         category,
         ...(query && { q: query }),
         pageSize: 100,
