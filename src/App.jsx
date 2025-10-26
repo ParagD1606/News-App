@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-// 1. Import React Router components
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-router-dom";
 import Home from "./components/Home";
 import Bookmarks from "./components/Bookmarks";
@@ -12,22 +11,22 @@ import Login from "./components/Login";
 import Profile from "./components/Profile"; 
 import { fetchTopHeadlines } from "./services/newsApi";
 
-// New component to wrap the router logic and allow hook usage
 const AppContent = () => {
-  // 2. Use useLocation hook to get current path (replaces 'page' state)
   const location = useLocation(); 
-  
+
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
-  
   const [bookmarks, setBookmarks] = useState(() =>
     JSON.parse(localStorage.getItem("bookmarks") || "[]")
   );
-  
+
   const [newsArticles, setNewsArticles] = useState([]);
   const [category, setCategory] = useState("general");
   const [searchQuery, setSearchQuery] = useState(""); 
-  
-  // Theme effect (existing logic)
+
+  // NEW: Country state
+  const [country, setCountry] = useState("us"); // default: US
+
+  // Theme effect
   useEffect(() => {
     if (theme === "dark") {
       document.documentElement.classList.add("dark");
@@ -36,22 +35,19 @@ const AppContent = () => {
     }
     localStorage.setItem("theme", theme);
   }, [theme]);
-  
-  // 3. Updated Fetching Effect: Logic depends only on Category/Search/Location path
+
+  // Fetch news whenever category, searchQuery, country, or path changes
   useEffect(() => {
-    // Only fetch data if the user is on a content-based page
     const contentPages = ['/home', '/reels', '/analytics'];
     if (contentPages.includes(location.pathname) || location.pathname === '/') { 
         const loadNews = async () => {
-          const data = await fetchTopHeadlines(category, searchQuery);
+          const data = await fetchTopHeadlines(category, searchQuery, country);
           setNewsArticles(data);
         };
         loadNews();
     }
-    // 'page' is removed from dependency array
-  }, [category, searchQuery, location.pathname]); 
-  
-  // Bookmark handler remains the same
+  }, [category, searchQuery, country, location.pathname]); 
+
   const handleBookmark = (article) => {
     let updated;
     if (bookmarks.find((a) => a.url === article.url)) {
@@ -65,11 +61,9 @@ const AppContent = () => {
 
   const toggleTheme = () => setTheme(theme === "light" ? "dark" : "light");
 
-  // 4. Determine Navbar visibility based on URL path
   const hideNavbarPaths = ['/', '/registration', '/login'];
   const showNavbar = !hideNavbarPaths.includes(location.pathname);
   
-  // Conditional classes for the main wrapper
   const isLandingPage = location.pathname === '/';
   const themeClasses = !isLandingPage
     ? "bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100" 
@@ -78,26 +72,21 @@ const AppContent = () => {
   return (
     <div className={`relative w-full min-h-screen transition-colors duration-300 overflow-x-hidden ${themeClasses}`}>
       
-      {/* Navbar only shows if not on excluded paths */}
       {showNavbar && (
         <Navbar 
           theme={theme} 
           toggleTheme={toggleTheme} 
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
-          // 'page' and 'setPage' are removed from props
+          country={country}
+          setCountry={setCountry}
         />
       )}
       
-      {/* Spacer for fixed navbar only needed when navbar is visible */}
       {showNavbar && <div className="h-24"></div>} 
       
-      {/* 5. Use Routes/Route for page rendering */}
       <Routes>
-          {/* Landing page is the default route */}
           <Route path="/" element={<Landing />} />
-          
-          {/* Main App Routes */}
           <Route path="/home" element={
               <Home 
                 articles={newsArticles}
@@ -107,6 +96,7 @@ const AppContent = () => {
                 setCategory={setCategory}
                 searchQuery={searchQuery}
                 setSearchQuery={setSearchQuery}
+                country={country} // Pass country if needed inside Home
               />
           } />
           <Route path="/reels" element={
@@ -114,6 +104,7 @@ const AppContent = () => {
                   articles={newsArticles}
                   currentCategory={category}
                   searchQuery={searchQuery}
+                  country={country}
               />
           } />
           <Route path="/bookmarks" element={
@@ -130,23 +121,15 @@ const AppContent = () => {
                   theme={theme}
               />
           } />
-          <Route path="/profile" element={
-              <Profile bookmarks={bookmarks} />
-          } />
-          
-          {/* Auth Routes */}
+          <Route path="/profile" element={<Profile bookmarks={bookmarks} />} />
           <Route path="/registration" element={<Registration />} />
           <Route path="/login" element={<Login />} />
-          
-          {/* Fallback/Catch-all: Redirect to Home if path is unknown */}
           <Route path="*" element={<Navigate to="/home" replace />} />
-
       </Routes>
     </div>
   );
 };
 
-// Outer component to hold BrowserRouter
 const App = () => (
     <BrowserRouter>
         <AppContent />

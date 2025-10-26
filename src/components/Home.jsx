@@ -4,13 +4,12 @@ import { HiSearch, HiArrowLeft, HiArrowRight } from "react-icons/hi";
 
 const PAGE_SIZE = 6;
 
-// Helper function to calculate which page numbers to show (max 2 core pages)
+// Helper function to calculate which page numbers
 const getPageNumbersToShow = (currentPage, totalPages) => {
   if (totalPages <= 4) {
     return Array.from({ length: totalPages }, (_, i) => i + 1);
   }
 
-  // Core window size is 2 pages.
   const windowSize = 2;
   let startPage = Math.max(2, currentPage); // Start at current page if > 1
   let endPage = Math.min(totalPages - 1, currentPage + windowSize - 1);
@@ -45,7 +44,6 @@ const getPageNumbersToShow = (currentPage, totalPages) => {
   return [...new Set(pagesToShow)];
 };
 
-// UPDATED PROPS: Receives all data and setters from App.jsx
 const Home = ({ 
     articles, 
     bookmarks, 
@@ -55,7 +53,6 @@ const Home = ({
     searchQuery, 
     setSearchQuery 
 }) => { 
-  // ONLY KEEPS STATE RELATED TO PAGINATION, all others are props
   const [currentPage, setCurrentPage] = useState(1);
   
   const categories = [

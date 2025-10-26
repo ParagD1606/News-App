@@ -1,12 +1,10 @@
 import React from "react";
 import { HiBookmark, HiArrowLeft } from "react-icons/hi"; 
 import NewsCard from "./NewsCard";
-// 1. Import useNavigate
 import { useNavigate } from "react-router-dom"; 
 
-// 2. Remove 'setPage' prop
 const Bookmarks = ({ bookmarks, handleBookmark }) => {
-  // 3. Initialize useNavigate
+
   const navigate = useNavigate();
   
   return (
