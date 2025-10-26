@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { 
-  HiSun, HiMoon, HiBookmark, HiChartBar, HiMenu, HiX, HiHome, HiPhotograph, HiUserCircle 
+  HiSun, HiMoon, HiBookmark, HiChartBar, HiMenu, HiX, HiHome, HiPhotograph, HiUserCircle, HiRefresh 
 } from "react-icons/hi"; 
 import { useNavigate, useLocation } from "react-router-dom"; 
 import { SUPPORTED_COUNTRIES } from "../services/newsApi";
 
-const Navbar = ({ theme, toggleTheme, searchQuery, setSearchQuery, country, setCountry }) => {
+const Navbar = ({ theme, toggleTheme, searchQuery, setSearchQuery, country, setCountry, onRefresh }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -77,8 +77,8 @@ const Navbar = ({ theme, toggleTheme, searchQuery, setSearchQuery, country, setC
             ))}
           </div>
 
-          {/* COUNTRY DROPDOWN - DESKTOP */}
-          <div className="hidden md:block relative">
+          {/* COUNTRY DROPDOWN */}
+          <div className="hidden md:flex items-center gap-2">
             <select
               value={country}
               onChange={(e) => setCountry(e.target.value)}
@@ -88,6 +88,15 @@ const Navbar = ({ theme, toggleTheme, searchQuery, setSearchQuery, country, setC
                 <option key={c.code} value={c.code}>{c.name}</option>
               ))}
             </select>
+
+            {/* REFRESH BUTTON */}
+            <button
+              onClick={onRefresh}
+              className="p-2 rounded-full bg-blue-500 text-white hover:bg-blue-600 transition"
+              title="Refresh News"
+            >
+              <HiRefresh className="w-5 h-5" />
+            </button>
           </div>
 
           {/* THEME TOGGLE */}
@@ -101,11 +110,7 @@ const Navbar = ({ theme, toggleTheme, searchQuery, setSearchQuery, country, setC
             <div className={`w-6 h-6 rounded-full shadow-lg flex items-center justify-center transition-all duration-500 ease-in-out ${
               theme === "dark" ? "bg-gray-900" : "bg-white"
             }`}>
-              {theme === "dark" ? (
-                <HiMoon className="w-4 h-4 text-blue-400" />
-              ) : (
-                <HiSun className="w-4 h-4 text-yellow-500" />
-              )}
+              {theme === "dark" ? <HiMoon className="w-4 h-4 text-blue-400" /> : <HiSun className="w-4 h-4 text-yellow-500" />}
             </div>
           </div>
 
@@ -117,7 +122,6 @@ const Navbar = ({ theme, toggleTheme, searchQuery, setSearchQuery, country, setC
           >
             {isMenuOpen ? <HiX className="w-6 h-6" /> : <HiMenu className="w-6 h-6" />}
           </button>
-
         </div>
       </div>
 
@@ -125,7 +129,6 @@ const Navbar = ({ theme, toggleTheme, searchQuery, setSearchQuery, country, setC
       {isMenuOpen && (
         <div className="absolute top-full left-0 w-full md:hidden bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 shadow-xl transition-all duration-300 ease-in-out">
           <div className="flex flex-col p-4 space-y-2">
-
             {navItems.map((item) => (
               <button 
                 key={item.name}
@@ -137,7 +140,7 @@ const Navbar = ({ theme, toggleTheme, searchQuery, setSearchQuery, country, setC
               </button>
             ))}
 
-            {/* COUNTRY DROPDOWN - MOBILE */}
+            {/* COUNTRY DROPDOWN MOBILE */}
             <select
               value={country}
               onChange={(e) => setCountry(e.target.value)}
@@ -148,6 +151,14 @@ const Navbar = ({ theme, toggleTheme, searchQuery, setSearchQuery, country, setC
               ))}
             </select>
 
+            {/* REFRESH BUTTON MOBILE */}
+            <button
+              onClick={onRefresh}
+              className="mt-2 p-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 w-full"
+              title="Refresh News"
+            >
+              Refresh News
+            </button>
           </div>
         </div>
       )}

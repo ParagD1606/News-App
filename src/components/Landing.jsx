@@ -32,7 +32,7 @@ const Landing = () => {
         {/* Aurora background - Using a cooler color palette */}
         <div className="absolute inset-0">
           <Aurora
-            colorStops={["#5227ff", "#00bcd4", "#7cff67"]} 
+            colorStops={["#29DDEA","#4D64F0",  "#E248DD"]} 
             blend={0.5}
             amplitude={1.0}
             speed={0.5}
@@ -136,7 +136,7 @@ const Landing = () => {
             
             <FeatureCard
                 icon={<HiVolumeUp className="w-8 h-8" />}
-                title="AI-Powered Audio Reels"
+                title="Audio Reels"
                 description="Swipe through news in a 'Reels' format and listen to the article summary using Text-to-Speech."
             />
             
