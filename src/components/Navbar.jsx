@@ -3,6 +3,7 @@ import {
   HiSun, HiMoon, HiBookmark, HiChartBar, HiMenu, HiX, HiHome, HiPhotograph, HiUserCircle 
 } from "react-icons/hi"; 
 import { useNavigate, useLocation } from "react-router-dom"; 
+import { SUPPORTED_COUNTRIES } from "../services/newsApi";
 
 const Navbar = ({ theme, toggleTheme, searchQuery, setSearchQuery, country, setCountry }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -29,8 +30,7 @@ const Navbar = ({ theme, toggleTheme, searchQuery, setSearchQuery, country, setC
     { code: "cn", name: "China" },
     { code: "ru", name: "Russia" },
     { code: "jp", name: "Japan" },
-    { code: "pk", name: "Pakistan" },
-  ];
+  ].filter(c => SUPPORTED_COUNTRIES.includes(c.code));
 
   const getLinkClasses = (path) =>
     `flex items-center gap-1 cursor-pointer transition ${

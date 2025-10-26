@@ -67,9 +67,21 @@ const calculateSourceDistribution = (articles) => {
   return final;
 };
 
-const calculateCategoryDistribution = (articles) => {
+const calculateCategoryDistribution = (articles, currentCategory, searchQuery) => {
+  const isSearch = !!searchQuery;
+  // Convert the category slug (e.g., 'business') to Title Case (e.g., 'Business')
+  const contextCategory = currentCategory.charAt(0).toUpperCase() + currentCategory.slice(1);
+
   const counts = articles.reduce((acc, a) => {
-    const category = a.category || "General";
+    // If a search query is active, group all articles under "Search Results"
+    if (isSearch) {
+        acc["Search Results"] = (acc["Search Results"] || 0) + 1;
+        return acc;
+    }
+    
+    // Otherwise, use the selected category as the article category
+    const category = contextCategory; 
+
     acc[category] = (acc[category] || 0) + 1;
     return acc;
   }, {});
@@ -105,10 +117,12 @@ const generateColors = (count) => {
 };
 
 // ================== MAIN COMPONENT ==================
-const Analytics = ({ articles, currentCategory, searchQuery }) => {
+const Analytics = ({ articles, currentCategory, setCategory, categories, searchQuery }) => {
   const sourceData = useMemo(() => calculateSourceDistribution(articles), [articles]);
   const wordData = useMemo(() => getWordFrequencies(articles), [articles]);
-  const categoryData = useMemo(() => calculateCategoryDistribution(articles), [articles]);
+  
+  const categoryData = useMemo(() => calculateCategoryDistribution(articles, currentCategory, searchQuery), [articles, currentCategory, searchQuery]);
+  
   const timeData = useMemo(() => calculateTimeSeries(articles), [articles]);
   const totalArticles = articles.length;
 
@@ -117,6 +131,13 @@ const Analytics = ({ articles, currentCategory, searchQuery }) => {
     : currentCategory === "general"
     ? "Top Headlines"
     : `${currentCategory.charAt(0).toUpperCase() + currentCategory.slice(1)} News`;
+  
+  const handleCategoryChange = (e) => {
+    setCategory(e.target.value);
+    // Also clear search when changing category from analytics
+    // This assumes setSearchQuery is available via App.jsx/Home.jsx props, 
+    // but based on current file structure, we'll only rely on setCategory
+  }
 
   if (totalArticles === 0) {
     return (
@@ -234,10 +255,30 @@ const Analytics = ({ articles, currentCategory, searchQuery }) => {
           </div>
         </div>
 
-        {/* CATEGORY BAR CHART */}
+        {/* CATEGORY BAR CHART - MODIFIED */}
         <div className="bg-gradient-to-b from-white to-blue-50 dark:from-gray-800 dark:to-gray-900 p-6 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 transition transform hover:scale-[1.01]">
-          <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white border-b pb-2 border-gray-200 dark:border-gray-700">Articles by Category</h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">Number of articles per category.</p>
+          <div className="flex justify-between items-center mb-4 border-b pb-2 border-gray-200 dark:border-gray-700">
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Articles by Category</h3>
+            
+            {/* NEW: Category Dropdown */}
+            {categories && (
+                <select
+                    value={currentCategory}
+                    onChange={handleCategoryChange}
+                    className="border rounded-lg bg-white dark:bg-gray-700 dark:text-white px-3 py-1 text-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    disabled={!!searchQuery} // Disable if search is active
+                >
+                    {categories.map((cat) => (
+                        <option key={cat} value={cat}>
+                            {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                        </option>
+                    ))}
+                </select>
+            )}
+          </div>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
+            {searchQuery ? "Showing articles from active search." : "Number of articles in the selected category."}
+          </p>
           <div className="flex justify-center items-center h-96">
             <Bar data={barData} options={barOptions} />
           </div>

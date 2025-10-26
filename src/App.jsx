@@ -9,34 +9,25 @@ import Reels from "./components/Reels";
 import Registration from "./components/Registration"; 
 import Login from "./components/Login"; 
 import Profile from "./components/Profile"; 
-import { fetchTopHeadlines } from "./services/newsApi";
+import { SUPPORTED_COUNTRIES, fetchTopHeadlines } from "./services/newsApi";
 
 const AppContent = () => {
-  const location = useLocation(); 
+  const location = useLocation();
+
 
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
-  const [bookmarks, setBookmarks] = useState(() =>
-    JSON.parse(localStorage.getItem("bookmarks") || "[]")
-  );
-
+  const [bookmarks, setBookmarks] = useState(JSON.parse(localStorage.getItem("bookmarks") || "[]"));
   const [newsArticles, setNewsArticles] = useState([]);
   const [category, setCategory] = useState("general");
   const [searchQuery, setSearchQuery] = useState(""); 
+  const [country, setCountry] = useState(SUPPORTED_COUNTRIES[0]); // default: US
 
-  // NEW: Country state
-  const [country, setCountry] = useState("us"); // default: US
-
-  // Theme effect
   useEffect(() => {
-    if (theme === "dark") {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
+    if (theme === "dark") document.documentElement.classList.add("dark");
+    else document.documentElement.classList.remove("dark");
     localStorage.setItem("theme", theme);
   }, [theme]);
 
-  // Fetch news whenever category, searchQuery, country, or path changes
   useEffect(() => {
     const contentPages = ['/home', '/reels', '/analytics'];
     if (contentPages.includes(location.pathname) || location.pathname === '/') { 
@@ -49,12 +40,9 @@ const AppContent = () => {
   }, [category, searchQuery, country, location.pathname]); 
 
   const handleBookmark = (article) => {
-    let updated;
-    if (bookmarks.find((a) => a.url === article.url)) {
-      updated = bookmarks.filter((a) => a.url !== article.url);
-    } else {
-      updated = [...bookmarks, article];
-    }
+    const updated = bookmarks.find((a) => a.url === article.url)
+      ? bookmarks.filter((a) => a.url !== article.url)
+      : [...bookmarks, article];
     setBookmarks(updated);
     localStorage.setItem("bookmarks", JSON.stringify(updated));
   };
@@ -63,7 +51,6 @@ const AppContent = () => {
 
   const hideNavbarPaths = ['/', '/registration', '/login'];
   const showNavbar = !hideNavbarPaths.includes(location.pathname);
-  
   const isLandingPage = location.pathname === '/';
   const themeClasses = !isLandingPage
     ? "bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100" 
@@ -96,7 +83,7 @@ const AppContent = () => {
                 setCategory={setCategory}
                 searchQuery={searchQuery}
                 setSearchQuery={setSearchQuery}
-                country={country} // Pass country if needed inside Home
+                country={country}
               />
           } />
           <Route path="/reels" element={

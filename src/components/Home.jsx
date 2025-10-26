@@ -4,6 +4,17 @@ import { HiSearch, HiArrowLeft, HiArrowRight } from "react-icons/hi";
 
 const PAGE_SIZE = 6;
 
+// NEW: Exported categories list
+export const categories = [
+  "general",
+  "business",
+  "technology",
+  "sports",
+  "entertainment",
+  "health",
+  "science",
+];
+
 // Helper function to calculate which page numbers
 const getPageNumbersToShow = (currentPage, totalPages) => {
   if (totalPages <= 4) {
@@ -55,16 +66,6 @@ const Home = ({
 }) => { 
   const [currentPage, setCurrentPage] = useState(1);
   
-  const categories = [
-    "general",
-    "business",
-    "technology",
-    "sports",
-    "entertainment",
-    "health",
-    "science",
-  ];
-
   // Function to handle search input change
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
@@ -79,13 +80,14 @@ const Home = ({
     setCurrentPage(1); // NEW: Reset to page 1 on category change
   };
 
-  // Filter articles to ensure urlToImage exists and is not null/empty
-  const filteredArticles = articles.filter(article => article.urlToImage);
+  // FIX: Removed the strict image filter. 
+  // All articles are used, and NewsCard will handle the fallback image.
+  const filteredArticles = articles;
 
   const startIdx = (currentPage - 1) * PAGE_SIZE;
   const currentArticles = filteredArticles.slice(startIdx, startIdx + PAGE_SIZE);
 
-  // Recalculate totalPages based on the filtered list size
+  // Recalculate totalPages based on the (now unfiltered) list size
   const totalPagesAfterFilter = Math.ceil(filteredArticles.length / PAGE_SIZE);
 
   // Get the optimized array of pages to render
@@ -155,10 +157,10 @@ const Home = ({
             isBookmarked={!!bookmarks.find((a) => a.url === article.url)}
           />
         ))}
-        {/* Show message if no articles with images are found */}
+        {/* Show message if no articles are found */}
         {filteredArticles.length === 0 && (
             <div className="col-span-full text-center py-10 text-xl text-gray-700 dark:text-gray-300">
-                No articles with images found in this category or search.
+                No articles found in this category or search.
             </div>
         )}
       </main>
