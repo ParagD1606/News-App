@@ -5,7 +5,7 @@ import { HiSearch, HiArrowLeft, HiArrowRight } from "react-icons/hi";
 const PAGE_SIZE = 6;
 
 // Categories list
-export const categories = [
+export const categories = [ // EXPORTED for use in other components like Reels/Analytics
   "general",
   "business",
   "technology",
@@ -15,7 +15,7 @@ export const categories = [
   "science",
 ];
 
-// Pagination logic
+// Pagination logic: Calculates the page numbers to display in the control row.
 const getPageNumbersToShow = (currentPage, totalPages) => {
   if (totalPages <= 4) return Array.from({ length: totalPages }, (_, i) => i + 1);
 
@@ -23,10 +23,12 @@ const getPageNumbersToShow = (currentPage, totalPages) => {
   let startPage = Math.max(2, currentPage);
   let endPage = Math.min(totalPages - 1, currentPage + windowSize - 1);
 
+  // Adjust window near the end
   if (currentPage >= totalPages - 1) {
     startPage = Math.max(2, totalPages - 2);
     endPage = totalPages - 1;
   }
+  // Adjust window near the start
   if (currentPage <= 2) {
     startPage = 2;
     endPage = Math.min(totalPages - 1, 3);
@@ -39,6 +41,7 @@ const getPageNumbersToShow = (currentPage, totalPages) => {
   if (endPage < totalPages - 1) pagesToShow.push("...");
   if (totalPages > 1) pagesToShow.push(totalPages);
 
+  // Ensure unique pages and correct order
   return [...new Set(pagesToShow)];
 };
 
@@ -53,21 +56,21 @@ const Home = ({
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Search handler
+  // Search handler: updates searchQuery and clears category
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
     setCategory(""); // Clear category when searching
-    setCurrentPage(1);
+    setCurrentPage(1); // Reset to first page
   };
 
-  // Category handler
+  // Category handler: updates category and clears search
   const handleCategoryChange = (cat) => {
     setCategory(cat);
     setSearchQuery(""); // Clear search
-    setCurrentPage(1);
+    setCurrentPage(1); // Reset to first page
   };
 
-  // Current page articles
+  // Calculate articles for the current page
   const startIdx = (currentPage - 1) * PAGE_SIZE;
   const currentArticles = articles.slice(startIdx, startIdx + PAGE_SIZE);
   const totalPages = Math.ceil(articles.length / PAGE_SIZE);
@@ -75,7 +78,7 @@ const Home = ({
 
   return (
     <div className="max-w-7xl mx-auto">
-      {/* Header: Search + Categories */}
+      {/* Header: Search + Categories - NOT FIXED */}
       <div className="px-6 py-6 sm:py-8 border-b border-gray-200 dark:border-gray-700/50 shadow-sm dark:shadow-none">
 
         {/* Search Bar */}

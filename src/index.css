@@ -32,3 +32,18 @@
 .animate-fade-in {
     animation-name: fade-in;
 }
+
+/* NEW: Animation for Refresh Button */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* NEW: Utility class for spinning animation */
+.animate-spin-slow {
+    animation: spin 1s linear infinite;
+}

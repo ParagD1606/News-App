@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { HiSun, HiMoon, HiBookmark, HiChartBar, HiMenu, HiX, HiHome, HiPhotograph, HiUserCircle, HiRefresh } from "react-icons/hi";
 import { useNavigate, useLocation } from "react-router-dom";
 
-const Navbar = ({ theme, toggleTheme, searchQuery, setSearchQuery, onRefresh }) => {
+// ACCEPT NEW PROP: isRefreshing
+const Navbar = ({ theme, toggleTheme, searchQuery, setSearchQuery, onRefresh, isRefreshing }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -54,8 +55,14 @@ const Navbar = ({ theme, toggleTheme, searchQuery, setSearchQuery, onRefresh }) 
           </div>
 
           <div className="hidden md:flex items-center gap-2">
-            <button onClick={onRefresh} className="p-2 rounded-full bg-blue-500 text-white hover:bg-blue-600 transition" title="Refresh News">
-              <HiRefresh className="w-5 h-5" />
+            <button 
+              onClick={onRefresh} 
+              className="p-2 rounded-full bg-blue-500 text-white hover:bg-blue-600 transition" 
+              title={isRefreshing ? "Refreshing..." : "Refresh News"}
+              disabled={isRefreshing} // DISABLE while fetching
+            >
+              {/* CONDITIONAL CLASS: Apply spin animation */}
+              <HiRefresh className={`w-5 h-5 ${isRefreshing ? "animate-spin-slow" : ""}`} />
             </button>
           </div>
 
@@ -81,7 +88,15 @@ const Navbar = ({ theme, toggleTheme, searchQuery, setSearchQuery, onRefresh }) 
               </button>
             ))}
 
-            <button onClick={onRefresh} className="mt-2 p-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 w-full">Refresh News</button>
+            {/* UPDATED: Mobile Refresh Button with state and animation */}
+            <button 
+              onClick={onRefresh} 
+              className="mt-2 p-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 w-full flex items-center justify-center gap-2"
+              disabled={isRefreshing}
+            >
+                <HiRefresh className={`w-5 h-5 ${isRefreshing ? "animate-spin-slow" : ""}`} />
+                <span>{isRefreshing ? "Refreshing..." : "Refresh News"}</span>
+            </button>
           </div>
         </div>
       )}

@@ -21,6 +21,8 @@ const AppContent = () => {
   const [newsArticles, setNewsArticles] = useState([]);
   const [category, setCategory] = useState("general");
   const [searchQuery, setSearchQuery] = useState("");
+  // NEW STATE: Track refreshing status
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Theme effect
   useEffect(() => {
@@ -49,9 +51,20 @@ const AppContent = () => {
   const hideNavbarPaths = ["/", "/registration", "/login"];
   const showNavbar = !hideNavbarPaths.includes(location.pathname);
 
+  // UPDATED: Toggles the loading state before and after the fetch
   const handleRefresh = async () => {
-    const data = await fetchTopHeadlines(category, searchQuery, "us");
-    setNewsArticles(data);
+    setIsRefreshing(true); // Start refreshing animation
+    try {
+      const data = await fetchTopHeadlines(category, searchQuery, "us");
+      setNewsArticles(data);
+    } catch (error) {
+        console.error("Refresh failed:", error);
+    } finally {
+        // A short delay to allow the user to see the refresh animation
+        setTimeout(() => {
+            setIsRefreshing(false); // Stop refreshing animation
+        }, 500);
+    }
   };
 
   return (
@@ -63,6 +76,7 @@ const AppContent = () => {
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           onRefresh={handleRefresh}
+          isRefreshing={isRefreshing} // PASS NEW PROP
         />    
       )}
 
@@ -81,7 +95,16 @@ const AppContent = () => {
             setSearchQuery={setSearchQuery}
           />
         } />
-        <Route path="/reels" element={<Reels articles={newsArticles} currentCategory={category} searchQuery={searchQuery} country="us" />} />
+        <Route path="/reels" element={
+            <Reels 
+                articles={newsArticles} 
+                currentCategory={category} 
+                searchQuery={searchQuery} 
+                setCategory={setCategory} // PASSED
+                setSearchQuery={setSearchQuery} // PASSED
+                country="us" 
+            />
+        } />
         <Route path="/bookmarks" element={<Bookmarks bookmarks={bookmarks} handleBookmark={handleBookmark} />} />
         <Route path="/analytics" element={<Analytics articles={newsArticles} currentCategory={category} searchQuery={searchQuery} theme={theme} />} />
         <Route path="/profile" element={<Profile bookmarks={bookmarks} />} />

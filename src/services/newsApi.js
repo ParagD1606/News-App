@@ -13,7 +13,7 @@ export const fetchTopHeadlines = async (category = "general", query = "") => {
         country: "us",
         category,
         ...(query && { q: query }),
-        pageSize: 100,
+        pageSize: 20,
       },
     });
 
