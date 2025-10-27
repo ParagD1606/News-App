@@ -10,6 +10,7 @@ import Registration from "./components/Registration";
 import Login from "./components/Login";
 import Profile from "./components/Profile";
 import { fetchTopHeadlines, SUPPORTED_COUNTRIES } from "./services/newsApi";
+import { categories } from "./components/Home"; // ⬅️ Import categories for Analytics
 
 const AppContent = () => {
   const location = useLocation();
@@ -21,7 +22,7 @@ const AppContent = () => {
   const [newsArticles, setNewsArticles] = useState([]);
   const [category, setCategory] = useState("general");
   const [searchQuery, setSearchQuery] = useState("");
-  const [country, setCountry] = useState("us"); // 🌍 NEW
+  const [country, setCountry] = useState("us"); 
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
@@ -74,22 +75,8 @@ const AppContent = () => {
         />    
       )}
 
-      {showNavbar && (
-        <div className="flex justify-center mt-4">
-          {/* 🌍 Country Selector */}
-          <select
-            value={country}
-            onChange={(e) => setCountry(e.target.value)}
-            className="px-4 py-2 rounded-lg border border-blue-500 bg-white dark:bg-gray-800 dark:border-blue-600 text-blue-600 dark:text-blue-400 font-medium focus:ring focus:ring-blue-300 transition-all"
-          >
-            {SUPPORTED_COUNTRIES.map((c) => (
-              <option key={c.code} value={c.code}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-        </div>
-      )}
+      {/* Padding space for fixed Navbar */}
+      {showNavbar && <div className="pt-20" />} 
 
       <Routes>
         <Route path="/" element={<Landing />} />
@@ -110,14 +97,23 @@ const AppContent = () => {
           <Reels 
             articles={newsArticles} 
             currentCategory={category} 
-            searchQuery={searchQuery} 
             setCategory={setCategory}
-            setSearchQuery={setSearchQuery}
-            country={country}
           />
         } />
         <Route path="/bookmarks" element={<Bookmarks bookmarks={bookmarks} handleBookmark={handleBookmark} />} />
-        <Route path="/analytics" element={<Analytics articles={newsArticles} currentCategory={category} searchQuery={searchQuery} theme={theme} />} />
+        <Route path="/analytics" element={
+          <Analytics 
+            articles={newsArticles} 
+            currentCategory={category} 
+            searchQuery={searchQuery} 
+            theme={theme}
+            // ⬅️ Passing required props to Analytics
+            categories={categories}
+            country={country}
+            setCountry={setCountry}
+            SUPPORTED_COUNTRIES={SUPPORTED_COUNTRIES}
+          />
+        } />
         <Route path="/profile" element={<Profile bookmarks={bookmarks} />} />
         <Route path="/registration" element={<Registration />} />
         <Route path="/login" element={<Login />} />

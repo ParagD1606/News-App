@@ -24,13 +24,13 @@ export const fetchTopHeadlines = async (
         country,
         category,
         ...(query && { q: query }),
-        pageSize: 20,
+        pageSize: 12,
       },
     });
 
     const articles = res.data.articles || [];
 
-    // Fallback for other countries if no articles found
+    // Fallback for other countries
     if (articles.length === 0) {
       let fallbackQuery = "";
 
