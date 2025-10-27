@@ -8,19 +8,24 @@ const NewsCard = ({ article, onBookmark, isBookmarked }) => {
       article.description || article.content || "No description available."
     }`;
 
-    // Cancel any ongoing speech before starting a new one
     if (window.speechSynthesis.speaking) {
       window.speechSynthesis.cancel();
       return;
     }
 
     const utterance = new SpeechSynthesisUtterance(textToSpeak);
-    utterance.rate = 1; // normal speed
-    utterance.pitch = 1; // normal pitch
+    utterance.rate = 1;
+    utterance.pitch = 1;
     utterance.lang = "en-US";
 
     window.speechSynthesis.speak(utterance);
   }, [article.title, article.description, article.content]);
+
+  // 🖼️ Fallback image handler
+  const handleImageError = (e) => {
+    e.target.onerror = null; // Prevent infinite loop
+    e.target.src = "/fallback.jpg"; // Your fallback image in /public folder
+  };
 
   return (
     <div
@@ -34,9 +39,10 @@ const NewsCard = ({ article, onBookmark, isBookmarked }) => {
       {/* Article Image */}
       <img
         src={article.urlToImage || "/fallback.jpg"}
-        onError={(e) => (e.target.src = "/fallback.jpg")}
+        onError={handleImageError}
         alt={article.title}
-        className="w-full h-44 object-cover rounded-lg"
+        loading="lazy"
+        className="w-full h-44 object-cover rounded-lg select-none"
       />
 
       {/* Article Title */}
@@ -49,8 +55,8 @@ const NewsCard = ({ article, onBookmark, isBookmarked }) => {
         {article.description || "No description available for this article."}
       </p>
 
+      {/* Footer: Read link + buttons */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pt-2 border-t border-gray-100 dark:border-gray-700/50">
-        {/* Read full article */}
         <a
           href={article.url}
           target="_blank"
@@ -60,9 +66,8 @@ const NewsCard = ({ article, onBookmark, isBookmarked }) => {
           Read Full Article →
         </a>
 
-        {/* Action Buttons */}
         <div className="flex items-center gap-3 self-end sm:self-auto">
-          
+          {/* Listen Button */}
           <button
             onClick={handleTextToSpeech}
             title="Listen to Article Summary"
@@ -71,6 +76,7 @@ const NewsCard = ({ article, onBookmark, isBookmarked }) => {
             <HiVolumeUp className="w-5 h-5" />
           </button>
 
+          {/* Bookmark Button */}
           <button
             onClick={() => onBookmark(article)}
             title={isBookmarked ? "Remove Bookmark" : "Add Bookmark"}

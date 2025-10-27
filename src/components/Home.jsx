@@ -4,8 +4,19 @@ import { HiSearch, HiArrowLeft, HiArrowRight } from "react-icons/hi";
 
 const PAGE_SIZE = 6;
 
+// Countries supported by NewsAPI
+const SUPPORTED_COUNTRIES = [
+  { code: "us", name: "US" },
+  { code: "in", name: "IN" },
+  { code: "gb", name: "UK" },
+  { code: "ca", name: "CA" },
+  { code: "au", name: "AU" },
+  { code: "de", name: "DE" },
+  { code: "jp", name: "JP" },
+];
+
 // Categories list
-export const categories = [ // EXPORTED for use in other components like Reels/Analytics
+export const categories = [
   "general",
   "business",
   "technology",
@@ -15,33 +26,26 @@ export const categories = [ // EXPORTED for use in other components like Reels/A
   "science",
 ];
 
-// Pagination logic: Calculates the page numbers to display in the control row.
+// Pagination logic
 const getPageNumbersToShow = (currentPage, totalPages) => {
   if (totalPages <= 4) return Array.from({ length: totalPages }, (_, i) => i + 1);
-
   const windowSize = 2;
   let startPage = Math.max(2, currentPage);
   let endPage = Math.min(totalPages - 1, currentPage + windowSize - 1);
-
-  // Adjust window near the end
   if (currentPage >= totalPages - 1) {
     startPage = Math.max(2, totalPages - 2);
     endPage = totalPages - 1;
   }
-  // Adjust window near the start
   if (currentPage <= 2) {
     startPage = 2;
     endPage = Math.min(totalPages - 1, 3);
   }
-
   const pagesToShow = [];
-  pagesToShow.push(1); // Always first page
+  pagesToShow.push(1);
   if (startPage > 2) pagesToShow.push("...");
   for (let i = startPage; i <= endPage; i++) pagesToShow.push(i);
   if (endPage < totalPages - 1) pagesToShow.push("...");
   if (totalPages > 1) pagesToShow.push(totalPages);
-
-  // Ensure unique pages and correct order
   return [...new Set(pagesToShow)];
 };
 
@@ -52,25 +56,33 @@ const Home = ({
   category,
   setCategory,
   searchQuery,
-  setSearchQuery
+  setSearchQuery,
+  country,
+  setCountry,
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Search handler: updates searchQuery and clears category
+  // Search handler
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
-    setCategory(""); // Clear category when searching
-    setCurrentPage(1); // Reset to first page
+    setCategory("");
+    setCurrentPage(1);
   };
 
-  // Category handler: updates category and clears search
+  // Category handler
   const handleCategoryChange = (cat) => {
     setCategory(cat);
-    setSearchQuery(""); // Clear search
-    setCurrentPage(1); // Reset to first page
+    setSearchQuery("");
+    setCurrentPage(1);
   };
 
-  // Calculate articles for the current page
+  // Country handler
+  const handleCountryChange = (e) => {
+    setCountry(e.target.value);
+    setCurrentPage(1);
+  };
+
+  // Pagination setup
   const startIdx = (currentPage - 1) * PAGE_SIZE;
   const currentArticles = articles.slice(startIdx, startIdx + PAGE_SIZE);
   const totalPages = Math.ceil(articles.length / PAGE_SIZE);
@@ -78,24 +90,48 @@ const Home = ({
 
   return (
     <div className="max-w-7xl mx-auto">
-      {/* Header: Search + Categories - NOT FIXED */}
+      {/* Header Section */}
       <div className="px-6 py-6 sm:py-8 border-b border-gray-200 dark:border-gray-700/50 shadow-sm dark:shadow-none">
 
-        {/* Search Bar */}
-        <div className="flex justify-center mb-6">
-          <div className="relative w-full max-w-xl">
+        {/* 🔍 Search + 🌍 Country in One Row */}
+        <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-6">
+          {/* Search Bar */}
+          <div className="relative w-full max-w-xl flex-grow">
             <input
               type="text"
-              placeholder="Search news articles..."
+              placeholder="Search news..."
               value={searchQuery}
               onChange={handleSearchChange}
               className="w-full py-3 pl-12 pr-4 border-2 border-blue-500/80 dark:border-blue-600 rounded-full bg-white dark:bg-gray-800 text-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-blue-500/30 transition shadow-lg"
             />
             <HiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-blue-500 dark:text-blue-400" />
           </div>
+
+          {/* Country Dropdown */}
+          <div className="relative w-28">
+            <select
+              value={country}
+              onChange={handleCountryChange}
+              className="w-full py-2.5 pl-3 pr-8 text-base border-2 border-blue-500/80 dark:border-blue-600 rounded-full bg-white dark:bg-gray-800 text-gray-900 dark:text-white font-medium shadow-md focus:outline-none focus:ring-4 focus:ring-blue-500/30 transition"
+            >
+              {SUPPORTED_COUNTRIES.map((c) => (
+                <option key={c.code} value={c.code}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+            <svg
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-blue-500 dark:text-blue-400 pointer-events-none"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
         </div>
 
-        {/* Categories */}
+        {/* 🏷️ Categories */}
         <div className="flex flex-wrap justify-center gap-3">
           {categories.map((cat) => (
             <button
@@ -126,7 +162,7 @@ const Home = ({
         </div>
       </div>
 
-      {/* News Articles */}
+      {/* 📰 News Articles */}
       <main className="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {currentArticles.map((article, idx) => (
           <NewsCard
@@ -144,7 +180,7 @@ const Home = ({
         )}
       </main>
 
-      {/* Pagination */}
+      {/* 📄 Pagination */}
       {totalPages > 1 && (
         <div className="flex justify-center items-center gap-2 p-6">
           {currentPage > 1 && (
@@ -161,7 +197,6 @@ const Home = ({
             if (page === "...") return (
               <span key={idx} className="px-1 sm:px-4 py-2 text-gray-500 dark:text-gray-400">...</span>
             );
-
             const isCurrent = currentPage === page;
             return (
               <button

@@ -9,7 +9,7 @@ import Reels from "./components/Reels";
 import Registration from "./components/Registration";
 import Login from "./components/Login";
 import Profile from "./components/Profile";
-import { fetchTopHeadlines } from "./services/newsApi";
+import { fetchTopHeadlines, SUPPORTED_COUNTRIES } from "./services/newsApi";
 
 const AppContent = () => {
   const location = useLocation();
@@ -21,23 +21,22 @@ const AppContent = () => {
   const [newsArticles, setNewsArticles] = useState([]);
   const [category, setCategory] = useState("general");
   const [searchQuery, setSearchQuery] = useState("");
-  // NEW STATE: Track refreshing status
+  const [country, setCountry] = useState("us"); // 🌍 NEW
   const [isRefreshing, setIsRefreshing] = useState(false);
 
-  // Theme effect
   useEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark");
     localStorage.setItem("theme", theme);
   }, [theme]);
 
-  // Fetch US news only
+  // Fetch news when category/search/country changes
   useEffect(() => {
     const loadNews = async () => {
-      const data = await fetchTopHeadlines(category, searchQuery, "us");
+      const data = await fetchTopHeadlines(category, searchQuery, country);
       setNewsArticles(data);
     };
     loadNews();
-  }, [category, searchQuery]);
+  }, [category, searchQuery, country]);
 
   const handleBookmark = (article) => {
     const updated = bookmarks.find(a => a.url === article.url)
@@ -48,22 +47,17 @@ const AppContent = () => {
   };
 
   const toggleTheme = () => setTheme(theme === "light" ? "dark" : "light");
+
   const hideNavbarPaths = ["/", "/registration", "/login"];
   const showNavbar = !hideNavbarPaths.includes(location.pathname);
 
-  // UPDATED: Toggles the loading state before and after the fetch
   const handleRefresh = async () => {
-    setIsRefreshing(true); // Start refreshing animation
+    setIsRefreshing(true);
     try {
-      const data = await fetchTopHeadlines(category, searchQuery, "us");
+      const data = await fetchTopHeadlines(category, searchQuery, country);
       setNewsArticles(data);
-    } catch (error) {
-        console.error("Refresh failed:", error);
     } finally {
-        // A short delay to allow the user to see the refresh animation
-        setTimeout(() => {
-            setIsRefreshing(false); // Stop refreshing animation
-        }, 500);
+      setTimeout(() => setIsRefreshing(false), 500);
     }
   };
 
@@ -76,11 +70,26 @@ const AppContent = () => {
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           onRefresh={handleRefresh}
-          isRefreshing={isRefreshing} // PASS NEW PROP
+          isRefreshing={isRefreshing}
         />    
       )}
 
-      {showNavbar && <div className="h-24" />}
+      {showNavbar && (
+        <div className="flex justify-center mt-4">
+          {/* 🌍 Country Selector */}
+          <select
+            value={country}
+            onChange={(e) => setCountry(e.target.value)}
+            className="px-4 py-2 rounded-lg border border-blue-500 bg-white dark:bg-gray-800 dark:border-blue-600 text-blue-600 dark:text-blue-400 font-medium focus:ring focus:ring-blue-300 transition-all"
+          >
+            {SUPPORTED_COUNTRIES.map((c) => (
+              <option key={c.code} value={c.code}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
 
       <Routes>
         <Route path="/" element={<Landing />} />
@@ -93,17 +102,19 @@ const AppContent = () => {
             setCategory={setCategory}
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
+            country={country}             
+            setCountry={setCountry} 
           />
         } />
         <Route path="/reels" element={
-            <Reels 
-                articles={newsArticles} 
-                currentCategory={category} 
-                searchQuery={searchQuery} 
-                setCategory={setCategory} // PASSED
-                setSearchQuery={setSearchQuery} // PASSED
-                country="us" 
-            />
+          <Reels 
+            articles={newsArticles} 
+            currentCategory={category} 
+            searchQuery={searchQuery} 
+            setCategory={setCategory}
+            setSearchQuery={setSearchQuery}
+            country={country}
+          />
         } />
         <Route path="/bookmarks" element={<Bookmarks bookmarks={bookmarks} handleBookmark={handleBookmark} />} />
         <Route path="/analytics" element={<Analytics articles={newsArticles} currentCategory={category} searchQuery={searchQuery} theme={theme} />} />
