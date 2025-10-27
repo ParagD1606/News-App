@@ -69,18 +69,16 @@ const calculateSourceDistribution = (articles) => {
 
 const calculateCategoryDistribution = (articles, currentCategory, searchQuery) => {
   const isSearch = !!searchQuery;
-  // Convert the category slug (e.g., 'business') to Title Case (e.g., 'Business')
+  // Convert the category 
   const contextCategory = currentCategory.charAt(0).toUpperCase() + currentCategory.slice(1);
 
   const counts = articles.reduce((acc, a) => {
-    // If a search query is active, group all articles under "Search Results"
     if (isSearch) {
         acc["Search Results"] = (acc["Search Results"] || 0) + 1;
         return acc;
     }
-    
-    // Otherwise, use the selected category as the article category
-    const category = contextCategory; 
+
+    const category = contextCategory;
 
     acc[category] = (acc[category] || 0) + 1;
     return acc;
@@ -134,9 +132,6 @@ const Analytics = ({ articles, currentCategory, setCategory, categories, searchQ
   
   const handleCategoryChange = (e) => {
     setCategory(e.target.value);
-    // Also clear search when changing category from analytics
-    // This assumes setSearchQuery is available via App.jsx/Home.jsx props, 
-    // but based on current file structure, we'll only rely on setCategory
   }
 
   if (totalArticles === 0) {
@@ -255,12 +250,12 @@ const Analytics = ({ articles, currentCategory, setCategory, categories, searchQ
           </div>
         </div>
 
-        {/* CATEGORY BAR CHART - MODIFIED */}
+        {/* CATEGORY BAR CHART */}
         <div className="bg-gradient-to-b from-white to-blue-50 dark:from-gray-800 dark:to-gray-900 p-6 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 transition transform hover:scale-[1.01]">
           <div className="flex justify-between items-center mb-4 border-b pb-2 border-gray-200 dark:border-gray-700">
             <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Articles by Category</h3>
             
-            {/* NEW: Category Dropdown */}
+            {/* Category Dropdown */}
             {categories && (
                 <select
                     value={currentCategory}

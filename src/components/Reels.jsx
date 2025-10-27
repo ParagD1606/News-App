@@ -20,11 +20,13 @@ const Reels = ({ articles, currentCategory, setCategory }) => {
   const reelContainerRef = useRef(null);
   const articleRefs = useRef([]);
   const iconTimeout = useRef(null);
+  const autoScrollTimeout = useRef(null); // ⬅️ New ref for auto-scroll timing
 
   // --- Speech handling ---
   const stopSpeech = useCallback(() => {
     window.speechSynthesis.cancel();
     clearTimeout(iconTimeout.current);
+    clearTimeout(autoScrollTimeout.current); // ⬅️ Stop auto-scroll if paused
     setIsPlaying(false);
   }, []);
 
@@ -34,13 +36,34 @@ const Reels = ({ articles, currentCategory, setCategory }) => {
       if (!article) return;
 
       stopSpeech();
+
       const text = `${article.title}. ${article.description || article.content || ""}`;
       const utterance = new SpeechSynthesisUtterance(text);
-      utterance.onstart = () => setIsPlaying(true);
-      utterance.onend = () => setIsPlaying(false);
+
+      utterance.onstart = () => {
+        setIsPlaying(true);
+      };
+
+      // ⬇️ When speech ends, smoothly scroll to the next reel
+      utterance.onend = () => {
+        setIsPlaying(false);
+        const nextIndex = (index + 1) % totalArticles;
+        const nextRef = articleRefs.current[nextIndex];
+        if (nextRef && reelContainerRef.current) {
+          reelContainerRef.current.scrollTo({
+            top: nextRef.offsetTop,
+            behavior: "smooth",
+          });
+        }
+        // Delay a bit before speaking the next one
+        autoScrollTimeout.current = setTimeout(() => {
+          setActiveIndex(nextIndex);
+        }, 1000); // wait 1s between scrolls
+      };
+
       window.speechSynthesis.speak(utterance);
     },
-    [filteredArticles, stopSpeech]
+    [filteredArticles, stopSpeech, totalArticles]
   );
 
   const togglePlayPause = useCallback(() => {
@@ -73,10 +96,11 @@ const Reels = ({ articles, currentCategory, setCategory }) => {
     };
   }, [filteredArticles, totalArticles, stopSpeech]);
 
-  // --- Auto-speak ---
+  // --- Auto-speak on index change ---
   useEffect(() => {
-    if (totalArticles > 0 && activeIndex >= 0 && activeIndex < totalArticles)
+    if (totalArticles > 0 && activeIndex >= 0 && activeIndex < totalArticles) {
       speakArticle(activeIndex);
+    }
     return stopSpeech;
   }, [activeIndex, totalArticles, speakArticle, stopSpeech]);
 
@@ -101,7 +125,7 @@ const Reels = ({ articles, currentCategory, setCategory }) => {
   return (
     <div className="flex flex-col items-center w-full min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
       {/* Header */}
-      <header className="w-full pt-0 pb-4 bg-white dark:bg-gray-900 shadow-md border-b border-gray-200 dark:border-gray-700 sticky top-0 z-20">
+      <header className="w-full pt-5 pb-4 bg-white dark:bg-gray-900 shadow-md border-b border-gray-200 dark:border-gray-700 sticky top-0 z-20">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex flex-nowrap overflow-x-auto justify-start sm:justify-center gap-3 scrollbar-hide">
             {categories.map((cat) => (
@@ -128,12 +152,12 @@ const Reels = ({ articles, currentCategory, setCategory }) => {
       <div
         ref={reelContainerRef}
         onClick={togglePlayPause}
-        className="relative w-full max-w-[430px] h-[calc(100vh-100px)] overflow-y-scroll snap-y snap-mandatory
+        className="relative w-full max-w-[430px] h-[calc(100vh-100px)] overflow-y-scroll scrollbar-hide snap-y snap-mandatory
                    shadow-2xl rounded-2xl border border-gray-300 dark:border-gray-700 
-                   bg-black/95 dark:bg-black scroll-smooth hide-scrollbar"
+                   bg-black/95 dark:bg-black scroll-smooth scrollbar-hide"
       >
         {/* Play/Pause icon */}
-        <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
+        <div className="hide-scrollbar fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
           <div
             className={`p-8 rounded-full bg-black/50 backdrop-blur-md transition-all duration-300 transform ${
               showIcon ? "opacity-100 scale-100" : "opacity-0 scale-75"
@@ -171,7 +195,7 @@ const Reels = ({ articles, currentCategory, setCategory }) => {
         ))}
 
         {/* Scroll indicator */}
-        <div className="absolute right-3 top-1/2 -translate-y-1/2 flex flex-col items-center gap-2">
+        <div className="absolute hide-scrollbar right-3 top-1/2 -translate-y-1/2 flex flex-col items-center gap-2">
           {filteredArticles.map((_, i) => (
             <span
               key={i}

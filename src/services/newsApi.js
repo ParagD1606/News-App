@@ -30,7 +30,7 @@ export const fetchTopHeadlines = async (
 
     const articles = res.data.articles || [];
 
-    // Fallback logic for countries with limited sources in free tier
+    // Fallback for other countries if no articles found
     if (articles.length === 0) {
       let fallbackQuery = "";
 

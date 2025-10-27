@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { HiOutlineBookmark, HiBookmark, HiVolumeUp } from "react-icons/hi";
 
 const NewsCard = ({ article, onBookmark, isBookmarked }) => {
-  // 🗣️ Text-to-speech handler
+  
   const handleTextToSpeech = useCallback(() => {
     const textToSpeak = `${article.title}. ${
       article.description || article.content || "No description available."
@@ -21,7 +21,6 @@ const NewsCard = ({ article, onBookmark, isBookmarked }) => {
     window.speechSynthesis.speak(utterance);
   }, [article.title, article.description, article.content]);
 
-  // 🖼️ Fallback image handler
   const handleImageError = (e) => {
     e.target.onerror = null; // Prevent infinite loop
     e.target.src = "/fallback.jpg"; // Your fallback image in /public folder

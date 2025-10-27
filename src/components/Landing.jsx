@@ -1,5 +1,4 @@
 import React, { useRef } from "react";
-// 1. Import useNavigate
 import { useNavigate } from "react-router-dom"; 
 import Aurora from "../Usages/Aurora";
 import LandingFooter from "./LandingFooter";
@@ -13,11 +12,9 @@ const FeatureCard = ({ icon, title, description }) => (
     </div>
 );
 
-
-// 2. Remove 'setPage' prop
 const Landing = () => {
   const featuresRef = useRef(null);
-  const navigate = useNavigate(); // 3. Initialize useNavigate
+  const navigate = useNavigate(); 
   
   // Function to smoothly scroll down to the features section
   const scrollToFeatures = () => {
@@ -27,9 +24,9 @@ const Landing = () => {
   return (
     <div className="relative w-full min-h-screen overflow-x-hidden bg-black"> 
       
-      {/* 1. Hero Section (Full Viewport Height) */}
+      {/* 1. Hero Section */}
       <div className="relative w-full h-screen overflow-hidden">
-        {/* Aurora background - Using a cooler color palette */}
+        {/* Aurora background */}
         <div className="absolute inset-0">
           <Aurora
             colorStops={["#29DDEA","#4D64F0",  "#E248DD"]} 
@@ -69,10 +66,10 @@ const Landing = () => {
           </p>
           
           <div className="flex space-x-4">
-              {/* Get Started Button - NOW POINTS TO REGISTRATION */}
+              {/* Get Started Button*/}
               <button
-                // 4. Use navigate for registration path
-                onClick={() => navigate("/registration")} 
+
+                onClick={() => navigate("/login")} 
                 className="px-8 py-3 bg-blue-500 text-white text-lg font-semibold rounded-full 
                            hover:bg-blue-600 transition duration-300 transform hover:scale-105 shadow-xl shadow-blue-500/30
                            opacity-0 animate-fade-in delay-1000"
@@ -172,8 +169,8 @@ const Landing = () => {
           </div>
         </div>
       </div>
-      
-      {/* Footer / Call to Action (Now using the separate component) */}
+
+      {/* Footer ( Call to Action) */}
       <LandingFooter />
     </div>
   );

@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import { HiMail, HiLockClosed, HiArrowLeft } from "react-icons/hi"; 
-// 1. Import useNavigate
 import { useNavigate } from "react-router-dom"; 
 
-// 2. Remove 'setPage' prop
 const Login = () => {
   const [formData, setFormData] = useState({
     email: "",
@@ -11,7 +9,6 @@ const Login = () => {
   });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  // 3. Initialize useNavigate
   const navigate = useNavigate(); 
 
   const handleChange = (e) => {
@@ -25,22 +22,17 @@ const Login = () => {
     setError("");
     setSuccess("");
 
-    // Basic Validation
     if (!formData.email || !formData.password) {
       setError("Please enter your email and password.");
       return;
     }
     
-    // In a real application, you would make an API call here to verify credentials.
     console.log("Attempting login with:", formData);
     
-    // Simulate successful login
     setSuccess("Login successful! Redirecting to Home...");
     setFormData({ email: "", password: "" });
     
-    // Simulate redirect after 2 seconds
     setTimeout(() => {
-        // 4. Use navigate
         navigate("/home");
     }, 2000);
   };
@@ -105,7 +97,6 @@ const Login = () => {
         
         {/* Switch to Registration */}
         <button
-            // 4. Use navigate
             onClick={() => navigate("/registration")}
             className="mt-6 w-full text-center text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 transition"
         >

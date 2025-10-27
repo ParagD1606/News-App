@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { HiUser, HiMail, HiLockClosed, HiArrowLeft } from "react-icons/hi"; 
-// 1. Import useNavigate
+import { HiUser, HiMail, HiLockClosed, HiArrowLeft } from "react-icons/hi";
 import { useNavigate } from "react-router-dom"; 
 
 // 2. Remove 'setPage' prop
@@ -12,7 +11,6 @@ const Registration = () => {
   });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  // 3. Initialize useNavigate
   const navigate = useNavigate();
 
   const handleChange = (e) => {

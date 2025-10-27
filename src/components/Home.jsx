@@ -6,13 +6,13 @@ const PAGE_SIZE = 6;
 
 // Countries supported by NewsAPI
 const SUPPORTED_COUNTRIES = [
-  { code: "us", name: "US" },
-  { code: "in", name: "IN" },
+  { code: "us", name: "USA" },
+  { code: "in", name: "INDIA" },
   { code: "gb", name: "UK" },
-  { code: "ca", name: "CA" },
-  { code: "au", name: "AU" },
-  { code: "de", name: "DE" },
-  { code: "jp", name: "JP" },
+  { code: "ca", name: "CANADA" },
+  { code: "au", name: "AUSTRALIA" },
+  { code: "de", name: "GERMANY" },
+  { code: "jp", name: "JAPAN" },
 ];
 
 // Categories list
@@ -93,7 +93,7 @@ const Home = ({
       {/* Header Section */}
       <div className="px-6 py-6 sm:py-8 border-b border-gray-200 dark:border-gray-700/50 shadow-sm dark:shadow-none">
 
-        {/* 🔍 Search + 🌍 Country in One Row */}
+        {/* Search + Country in One Row */}
         <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-6">
           {/* Search Bar */}
           <div className="relative w-full max-w-xl flex-grow">
@@ -108,11 +108,16 @@ const Home = ({
           </div>
 
           {/* Country Dropdown */}
-          <div className="relative w-28">
+          <div className="relative w-36 sm:w-44 md:w-48 cursor-pointer">
             <select
               value={country}
               onChange={handleCountryChange}
-              className="w-full py-2.5 pl-3 pr-8 text-base border-2 border-blue-500/80 dark:border-blue-600 rounded-full bg-white dark:bg-gray-800 text-gray-900 dark:text-white font-medium shadow-md focus:outline-none focus:ring-4 focus:ring-blue-500/30 transition"
+              className="w-full appearance-none py-2.5 pl-4 pr-10 text-sm sm:text-base 
+                        border-2 border-blue-500/70 dark:border-blue-600 
+                        rounded-full bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 
+                        font-semibold shadow-md hover:border-blue-600 dark:hover:border-blue-500 
+                        focus:outline-none focus:ring-4 focus:ring-blue-400/30 
+                        transition-all duration-300 ease-in-out cursor-pointer"
             >
               {SUPPORTED_COUNTRIES.map((c) => (
                 <option key={c.code} value={c.code}>
@@ -120,8 +125,12 @@ const Home = ({
                 </option>
               ))}
             </select>
+
+            {/* Custom Arrow */}
             <svg
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-blue-500 dark:text-blue-400 pointer-events-none"
+              className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 
+                        text-blue-500 dark:text-blue-400 pointer-events-none 
+                        transition-transform duration-300"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -129,9 +138,11 @@ const Home = ({
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
             </svg>
           </div>
+
+
         </div>
 
-        {/* 🏷️ Categories */}
+        {/* Categories */}
         <div className="flex flex-wrap justify-center gap-3">
           {categories.map((cat) => (
             <button
@@ -162,7 +173,7 @@ const Home = ({
         </div>
       </div>
 
-      {/* 📰 News Articles */}
+      {/* News Articles */}
       <main className="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {currentArticles.map((article, idx) => (
           <NewsCard
@@ -180,7 +191,7 @@ const Home = ({
         )}
       </main>
 
-      {/* 📄 Pagination */}
+      {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex justify-center items-center gap-2 p-6">
           {currentPage > 1 && (

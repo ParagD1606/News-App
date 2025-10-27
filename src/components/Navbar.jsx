@@ -61,7 +61,7 @@ const Navbar = ({ theme, toggleTheme, searchQuery, setSearchQuery, onRefresh, is
               title={isRefreshing ? "Refreshing..." : "Refresh News"}
               disabled={isRefreshing} // DISABLE while fetching
             >
-              {/* CONDITIONAL CLASS: Apply spin animation */}
+              {/* CONDITIONAL CLASS */}
               <HiRefresh className={`w-5 h-5 ${isRefreshing ? "animate-spin-slow" : ""}`} />
             </button>
           </div>
