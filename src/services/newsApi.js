@@ -1,8 +1,5 @@
 import axios from "axios";
 
-const API_KEY = import.meta.env.VITE_API_KEY;
-const BASE_URL = import.meta.env.VITE_BASE_URL;
-
 // Supported countries (free-tier compatible)
 export const SUPPORTED_COUNTRIES = [
   { code: "us", name: "United States" },
@@ -18,19 +15,19 @@ export const fetchTopHeadlines = async (
   country = "us"
 ) => {
   try {
-    const res = await axios.get(`${BASE_URL}/top-headlines`, {
+    // ✅ Call your Vercel backend proxy (no CORS)
+    const res = await axios.get("/api/news", {
       params: {
-        apiKey: API_KEY,
         country,
         category,
-        ...(query && { q: query }),
+        query,
         pageSize: 12,
       },
     });
 
     const articles = res.data.articles || [];
 
-    // Fallback for other countries
+    // Fallback for other countries (still handled through your backend)
     if (articles.length === 0) {
       let fallbackQuery = "";
 
@@ -51,11 +48,10 @@ export const fetchTopHeadlines = async (
           fallbackQuery = "World";
       }
 
-      const fallback = await axios.get(`${BASE_URL}/everything`, {
+      const fallback = await axios.get("/api/news", {
         params: {
-          apiKey: API_KEY,
-          q: fallbackQuery,
-          sortBy: "publishedAt",
+          query: fallbackQuery,
+          category,
           pageSize: 20,
         },
       });
